@@ -43,3 +43,9 @@ next-env.d.ts
 # playwright
 .tmp-playwright/
 test-results/
+
+# stale caches
+.next-old/
+.next-stale-*/
+.git-old/
+.tmp-*
