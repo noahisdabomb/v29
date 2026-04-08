@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Clock Face Test</title>
+  <style>
+    body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px; font-family: sans-serif; color: #aaa; }
+    canvas { border: 1px solid #333; border-radius: 8px; max-width: 90vw; }
+    h2 { margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; }
+  </style>
+</head>
+<body>
+  <h2>Clock Face — At Rest (6:59)</h2>
+  <canvas id="c1" width="1600" height="720"></canvas>
+  <h2>Clock Face — At Rest (7:00)</h2>
+  <canvas id="c2" width="1600" height="720"></canvas>
+  <h2>Individual Digits (0, 5, 6, 7, 9)</h2>
+  <canvas id="digits" width="1800" height="500"></canvas>
+
+  <script type="module">
+    // Import the glyph drawing function
+    // We'll inline it since this is a static test page
+
+    // --- rrect helper ---
+    function rrect(ctx, x, y, w, h, radius, ccw = false) {
+      const r = Math.min(radius, w * 0.5, h * 0.5);
+      if (ccw) {
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x, y);
+        ctx.quadraticCurveTo(x, y, x, y + r);
+        ctx.lineTo(x, y + h - r);
+        ctx.quadraticCurveTo(x, y + h, x + r, y + h);
+        ctx.lineTo(x + w - r, y + h);
+        ctx.quadraticCurveTo(x + w, y + h, x + w, y + h - r);
+        ctx.lineTo(x + w, y + r);
+        ctx.quadraticCurveTo(x + w, y, x + w - r, y);
+        ctx.closePath();
+      } else {
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+      }
+    }
+
+    // --- roundedPolygon helper ---
+    function roundedPolygon(ctx, vertices, radius) {
+      const n = vertices.length;
+      for (let i = 0; i < n; i++) {
+        const prev = vertices[(i - 1 + n) % n];
+        const curr = vertices[i];
+        const next = vertices[(i + 1) % n];
+        const dx1 = prev[0] - curr[0], dy1 = prev[1] - curr[1];
+        const dx2 = next[0] - curr[0], dy2 = next[1] - curr[1];
+        const len1 = Math.sqrt(dx1*dx1 + dy1*dy1);
+        const len2 = Math.sqrt(dx2*dx2 + dy2*dy2);
+        const r = Math.min(radius, len1 * 0.45, len2 * 0.45);
+        const p1x = curr[0] + (dx1/len1)*r, p1y = curr[1] + (dy1/len1)*r;
+        const p2x = curr[0] + (dx2/len2)*r, p2y = curr[1] + (dy2/len2)*r;
+        if (i === 0) ctx.moveTo(p1x, p1y);
+        else ctx.lineTo(p1x, p1y);
+        ctx.quadraticCurveTo(curr[0], curr[1], p2x, p2y);
+      }
+      ctx.closePath();
+    }
+
+    // --- drawFlipClockDigit ---
+    function drawFlipClockDigit(ctx, digit, x, y, width, height, color, alpha = 1) {
+      const sw = width * 0.23;
+      const cr = width * 0.20;
+      const icr = cr * 0.55;
+      const mid = y + height * 0.5;
+      const bot = y + height;
+
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.globalAlpha = alpha;
+
+      switch (digit) {
+        case '0': {
+          ctx.beginPath();
+          rrect(ctx, x, y, width, height, cr);
+          rrect(ctx, x+sw, y+sw, width-sw*2, height-sw*2, icr, true);
+          ctx.fill('evenodd');
+          break;
+        }
+        case '5': {
+          const midTop = mid - sw*0.5;
+          const midBot = mid + sw*0.5;
+          ctx.beginPath();
+          roundedPolygon(ctx, [
+            [x, y], [x+width, y], [x+width, y+sw], [x+sw, y+sw],
+            [x+sw, midTop], [x+width, midTop], [x+width, bot],
+            [x, bot], [x, bot-sw], [x+width-sw, bot-sw],
+            [x+width-sw, midBot], [x, midBot],
+          ], cr * 0.65);
+          ctx.fill();
+          break;
+        }
+        case '6': {
+          const midTop6 = mid - sw*0.5;
+          const midBot6 = mid + sw*0.5;
+          const cH6 = (bot-sw) - midBot6;
+          ctx.beginPath();
+          roundedPolygon(ctx, [
+            [x, y], [x+width, y], [x+width, y+sw], [x+sw, y+sw],
+            [x+sw, midTop6], [x+width, midTop6], [x+width, bot], [x, bot],
+          ], cr * 0.7);
+          rrect(ctx, x+sw, midBot6, width-sw*2, cH6, icr, true);
+          ctx.fill('evenodd');
+          break;
+        }
+        case '7': {
+          ctx.beginPath();
+          roundedPolygon(ctx, [
+            [x, y], [x+width, y], [x+width, bot],
+            [x+width-sw, bot], [x+width-sw, y+sw], [x, y+sw],
+          ], cr * 0.85);
+          ctx.fill();
+          break;
+        }
+        case '9': {
+          const midTop9 = mid - sw*0.5;
+          const midBot9 = mid + sw*0.5;
+          const cH9 = midTop9 - (y+sw);
+          ctx.beginPath();
+          roundedPolygon(ctx, [
+            [x, y], [x+width, y], [x+width, bot], [x, bot],
+            [x, bot-sw], [x+width-sw, bot-sw],
+            [x+width-sw, midBot9], [x, midBot9],
+          ], cr * 0.7);
+          rrect(ctx, x+sw, y+sw, width-sw*2, cH9, icr, true);
+          ctx.fill('evenodd');
+          break;
+        }
+      }
+      ctx.restore();
+    }
+
+    // --- roundRect helper for face ---
+    function roundRect(ctx, x, y, w, h, radius) {
+      const r = Math.min(radius, w*0.5, h*0.5);
+      ctx.beginPath();
+      ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y);
+      ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+      ctx.lineTo(x+w, y+h-r);
+      ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+      ctx.lineTo(x+r, y+h);
+      ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+      ctx.lineTo(x, y+r);
+      ctx.quadraticCurveTo(x, y, x+r, y);
+      ctx.closePath();
+    }
+
+    // --- Simplified clock face renderer ---
+    function drawClockFace(canvas, digits) {
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+
+      // Cavity background
+      const cg = ctx.createLinearGradient(0,0,0,H);
+      cg.addColorStop(0,'#141510'); cg.addColorStop(0.26,'#0c0d09');
+      cg.addColorStop(0.72,'#090a07'); cg.addColorStop(1,'#12130e');
+      ctx.fillStyle = cg;
+      roundRect(ctx, 0, 0, W, H, 28); ctx.fill();
+
+      // Shadows
+      ctx.fillStyle = 'rgba(0,0,0,0.16)';
+      ctx.fillRect(0, 0, W, H*0.24);
+      ctx.fillRect(0, H*0.76, W, H*0.24);
+
+      // Border
+      ctx.strokeStyle = 'rgba(255,255,255,0.042)'; ctx.lineWidth = 2;
+      roundRect(ctx, 1, 1, W-2, H-2, 28); ctx.stroke();
+
+      // Card layout
+      const cardY = H * 0.13, cardH = H * 0.7;
+      const cW = W * 0.88;
+      const hourW = cW * 0.215, minW = cW * 0.205;
+      const colonGap = cW * 0.066, minGap = cW * 0.02;
+      const usedW = hourW + colonGap + minW*2 + minGap;
+      const startX = (W - usedW) * 0.5;
+      const hourX = startX;
+      const minTensX = startX + hourW + colonGap;
+      const minOnesX = minTensX + minW + minGap;
+
+      // Carriers
+      ctx.fillStyle = '#10110d';
+      roundRect(ctx, hourX-20, cardY-18, hourW+40, cardH+36, 14); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1.2;
+      roundRect(ctx, hourX-20, cardY-18, hourW+40, cardH+36, 14); ctx.stroke();
+      ctx.fillStyle = '#10110d';
+      roundRect(ctx, minTensX-22, cardY-18, minW*2+minGap+44, cardH+36, 14); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1.2;
+      roundRect(ctx, minTensX-22, cardY-18, minW*2+minGap+44, cardH+36, 14); ctx.stroke();
+
+      // Guide dots
+      ctx.fillStyle = 'rgba(232,227,207,0.18)';
+      [hourX + hourW*0.24, hourX + hourW*0.76].forEach(x => {
+        roundRect(ctx, x-7, cardY-18, 14, 16, 4); ctx.fill();
+      });
+      [minTensX + minW*0.24, minTensX + minW*0.76].forEach(x => {
+        roundRect(ctx, x-7, cardY-18, 14, 16, 4); ctx.fill();
+      });
+      [minOnesX + minW*0.24, minOnesX + minW*0.76].forEach(x => {
+        roundRect(ctx, x-7, cardY-18, 14, 16, 4); ctx.fill();
+      });
+
+      // Draw cards
+      const cards = [
+        { x: hourX, y: cardY, w: hourW, h: cardH, digit: digits[0] },
+        { x: minTensX, y: cardY, w: minW, h: cardH, digit: digits[1] },
+        { x: minOnesX, y: cardY, w: minW, h: cardH, digit: digits[2] },
+      ];
+
+      cards.forEach(c => {
+        // Card shadow
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.34)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 7;
+        ctx.fillStyle = '#0a0b08';
+        roundRect(ctx, c.x, c.y, c.w, c.h, 9); ctx.fill();
+        ctx.restore();
+
+        // Top gradient
+        const tg = ctx.createLinearGradient(c.x, c.y, c.x, c.y+c.h*0.5);
+        tg.addColorStop(0,'#151712'); tg.addColorStop(1,'#0f110d');
+        ctx.fillStyle = tg; ctx.fillRect(c.x, c.y, c.w, c.h*0.5);
+
+        // Bottom gradient
+        const bg = ctx.createLinearGradient(c.x, c.y+c.h*0.5, c.x, c.y+c.h);
+        bg.addColorStop(0,'#11130f'); bg.addColorStop(1,'#070804');
+        ctx.fillStyle = bg; ctx.fillRect(c.x, c.y+c.h*0.5, c.w, c.h*0.5);
+
+        // Top accent
+        ctx.fillStyle = 'rgba(255,255,255,0.03)';
+        ctx.fillRect(c.x+10, c.y+8, c.w-20, 3);
+
+        // Seam
+        ctx.fillStyle = 'rgba(224,218,196,0.12)';
+        ctx.fillRect(c.x+10, c.y+c.h*0.5-1, c.w-20, 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.24)';
+        ctx.fillRect(c.x+12, c.y+c.h*0.5+2, c.w-24, 5);
+
+        // Border
+        ctx.strokeStyle = 'rgba(255,255,255,0.042)'; ctx.lineWidth = 1.15;
+        roundRect(ctx, c.x, c.y, c.w, c.h, 9); ctx.stroke();
+
+        // Digit
+        const dx = c.x + c.w * 0.13;
+        const dy = c.y + c.h * 0.045;
+        const dw = c.w * 0.74;
+        const dh = c.h * 0.91;
+        drawFlipClockDigit(ctx, c.digit, dx, dy, dw, dh, '#eae5d6', 0.88);
+      });
+
+      // Colon
+      ctx.fillStyle = 'rgba(239,233,211,0.9)';
+      const colonX = startX + hourW + colonGap*0.5;
+      const colonY = cardY + cardH*0.5;
+      ctx.beginPath(); roundRect(ctx, colonX-5, colonY-38, 10, 14, 4); ctx.fill();
+      ctx.beginPath(); roundRect(ctx, colonX-5, colonY+24, 10, 14, 4); ctx.fill();
+
+      // AM label
+      ctx.fillStyle = 'rgba(226,226,216,0.36)';
+      ctx.font = '500 24px monospace';
+      ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+      ctx.fillText('AM', hourX - W*0.055, cardY + cardH*0.79);
+    }
+
+    // Render test views
+    drawClockFace(document.getElementById('c1'), ['6','5','9']);
+    drawClockFace(document.getElementById('c2'), ['7','0','0']);
+
+    // Individual digits test
+    const dCtx = document.getElementById('digits').getContext('2d');
+    dCtx.fillStyle = '#0a0b08';
+    dCtx.fillRect(0, 0, 1800, 500);
+    const testDigits = ['0','5','6','7','9'];
+    testDigits.forEach((d, i) => {
+      // Label
+      dCtx.fillStyle = '#666';
+      dCtx.font = '24px monospace';
+      dCtx.textAlign = 'center';
+      dCtx.fillText(d, 180 + i*340, 30);
+      // Digit
+      drawFlipClockDigit(dCtx, d, 80 + i*340, 50, 200, 400, '#eae5d6', 0.88);
+    });
+  </script>
+</body>
+</html>

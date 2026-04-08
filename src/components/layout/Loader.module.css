@@ -1,0 +1,596 @@
+/* ── Loader ── CMYK glitch intro ── */
+
+/* ── Container ── */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-deep, #020208);
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+
+/* CRT scanline overlay */
+.loader::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(255, 255, 255, 0.015) 2px,
+    rgba(255, 255, 255, 0.015) 4px
+  );
+  pointer-events: none;
+  z-index: 2;
+  animation: scanlineShift 8s linear infinite;
+}
+
+/* ── States ── */
+.loader.done {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.6s;
+}
+
+/* ── Corner coordinates ── */
+.cornerTL,
+.cornerBR {
+  position: absolute;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(224, 68, 88, 0.12);
+  z-index: 3;
+}
+
+.cornerTL {
+  top: 24px;
+  left: 28px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cornerBR {
+  bottom: 24px;
+  right: 28px;
+}
+
+/* Blink dot */
+.blinkDot {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent, #E04458);
+  animation: fadeBlink 1.2s ease-in-out infinite;
+}
+
+/* ── Center stack ── */
+.center {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 3;
+}
+
+/* ── Logo wrapper ── */
+.logoWrap {
+  position: relative;
+  width: 80px;
+  height: 68px;
+}
+
+/* ── CMYK plates (color-shifted layers behind the main logo) ── */
+.plate {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity, clip-path;
+}
+
+.plateCyan {
+  filter: hue-rotate(140deg) saturate(5) brightness(1.4);
+  mix-blend-mode: screen;
+}
+
+.plateMagenta {
+  filter: hue-rotate(-80deg) saturate(5) brightness(1.3);
+  mix-blend-mode: screen;
+}
+
+.plateYellow {
+  filter: hue-rotate(20deg) saturate(6) brightness(1.6);
+  mix-blend-mode: screen;
+}
+
+/* During drawing state — micro-tear glitch on plates */
+.drawing .plateCyan {
+  animation: microTearC 2.4s steps(1) infinite;
+}
+
+.drawing .plateMagenta {
+  animation: microTearM 2.8s steps(1) infinite;
+}
+
+.drawing .plateYellow {
+  animation: microTearY 3.2s steps(1) infinite;
+}
+
+/* During drawing state — main logo micro-clip tear */
+.drawing .logoMain {
+  animation: microClipTear 3s steps(1) infinite;
+}
+
+/* ── Glitching state — full CMYK burst ── */
+.glitching .plateCyan {
+  animation: glitchTearC 60ms steps(1) infinite;
+  opacity: 0.75;
+}
+
+.glitching .plateMagenta {
+  animation: glitchTearM 60ms steps(1) infinite;
+  opacity: 0.8;
+}
+
+.glitching .plateYellow {
+  animation: glitchTearY 60ms steps(1) infinite;
+  opacity: 0.7;
+}
+
+.glitching .logoMain {
+  animation: glitchCorrupt 80ms steps(1) infinite;
+}
+
+/* ── Settled state — plates fade away ── */
+.settled .plate {
+  animation: none;
+  opacity: 0;
+  transform: translate(0);
+  clip-path: inset(0);
+  transition: opacity 0.4s ease-out;
+}
+
+.settled .logoMain {
+  animation: none;
+  clip-path: none;
+}
+
+/* ── Main logo SVG ── */
+.logoMain {
+  position: relative;
+  width: 80px;
+  height: 68px;
+}
+
+.logoMain path {
+  stroke-width: 1;
+  fill: transparent;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: strokeDraw 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.logoMain path:nth-child(1) {
+  stroke: #E04458;
+}
+
+.logoMain path:nth-child(2) {
+  stroke: #ffffff;
+}
+
+/* Logo fill transition when drawing completes */
+.logoFilled path:nth-child(1) {
+  fill: #E04458;
+  stroke-opacity: 0;
+  transition: fill 0.4s ease-out, stroke-opacity 0.3s ease-out;
+}
+
+.logoFilled path:nth-child(2) {
+  fill: #ffffff;
+  stroke-opacity: 0;
+  transition: fill 0.4s ease-out, stroke-opacity 0.3s ease-out;
+}
+
+/* ── Percentage counter ── */
+.percent {
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  color: var(--accent, #E04458);
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+}
+
+/* ── Progress bar ── */
+.progressWrap {
+  width: 160px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    var(--accent, #E04458),
+    rgba(224, 68, 88, 0.6)
+  );
+  transition: width 0.08s linear;
+}
+
+/* ── Status text ── */
+.status {
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: rgba(224, 68, 88, 0.5);
+  min-height: 12px;
+}
+
+/* ───────────────────────────────────────── */
+/* ── Keyframes                           ── */
+/* ───────────────────────────────────────── */
+
+@keyframes scanlineShift {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes strokeDraw {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fadeBlink {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ── Micro tear keyframes (drawing state) ── */
+
+@keyframes microTearC {
+  0%,
+  12% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  13% {
+    opacity: 0.5;
+    transform: translate(-5px, 0);
+    clip-path: inset(30% 0 50% 0);
+  }
+  15% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  42%,
+  44% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  45% {
+    opacity: 0.4;
+    transform: translate(4px, 0);
+    clip-path: inset(60% 0 20% 0);
+  }
+  47% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  70% {
+    opacity: 0.6;
+    transform: translate(-3px, 0);
+    clip-path: inset(10% 0 75% 0);
+  }
+  72% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+}
+
+@keyframes microTearM {
+  0%,
+  18% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  19% {
+    opacity: 0.45;
+    transform: translate(6px, 0);
+    clip-path: inset(45% 0 35% 0);
+  }
+  21% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  55%,
+  57% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  58% {
+    opacity: 0.5;
+    transform: translate(-4px, 0);
+    clip-path: inset(15% 0 65% 0);
+  }
+  60% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  80% {
+    opacity: 0.4;
+    transform: translate(3px, 0);
+    clip-path: inset(70% 0 10% 0);
+  }
+  82% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+}
+
+@keyframes microTearY {
+  0%,
+  8% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  9% {
+    opacity: 0.35;
+    transform: translate(-3px, 0);
+    clip-path: inset(55% 0 25% 0);
+  }
+  11% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  35%,
+  37% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  38% {
+    opacity: 0.5;
+    transform: translate(5px, 0);
+    clip-path: inset(20% 0 60% 0);
+  }
+  40% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  65% {
+    opacity: 0.45;
+    transform: translate(-4px, 0);
+    clip-path: inset(80% 0 5% 0);
+  }
+  67% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0);
+    clip-path: inset(0);
+  }
+}
+
+/* Main logo clip tear during drawing */
+@keyframes microClipTear {
+  0%,
+  25% {
+    clip-path: none;
+  }
+  26% {
+    clip-path: inset(40% 0 40% 0);
+  }
+  27% {
+    clip-path: none;
+  }
+  62% {
+    clip-path: inset(0 0 70% 0);
+  }
+  63% {
+    clip-path: none;
+  }
+  78% {
+    clip-path: inset(75% 0 0 0);
+  }
+  79% {
+    clip-path: none;
+  }
+  100% {
+    clip-path: none;
+  }
+}
+
+/* ── Glitch tear keyframes (glitching state) ── */
+
+@keyframes glitchTearC {
+  0% {
+    opacity: 0.75;
+    transform: translate(-8px, -2px);
+    clip-path: inset(10% 0 60% 0);
+  }
+  25% {
+    opacity: 0.7;
+    transform: translate(6px, 1px);
+    clip-path: inset(40% 0 30% 0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-4px, 0);
+    clip-path: inset(65% 0 10% 0);
+  }
+  75% {
+    opacity: 0.75;
+    transform: translate(7px, -1px);
+    clip-path: inset(20% 0 50% 0);
+  }
+  100% {
+    opacity: 0.75;
+    transform: translate(-8px, -2px);
+    clip-path: inset(10% 0 60% 0);
+  }
+}
+
+@keyframes glitchTearM {
+  0% {
+    opacity: 0.8;
+    transform: translate(7px, 2px);
+    clip-path: inset(50% 0 20% 0);
+  }
+  25% {
+    opacity: 0.75;
+    transform: translate(-5px, -1px);
+    clip-path: inset(15% 0 55% 0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(8px, 0);
+    clip-path: inset(70% 0 5% 0);
+  }
+  75% {
+    opacity: 0.8;
+    transform: translate(-6px, 1px);
+    clip-path: inset(30% 0 45% 0);
+  }
+  100% {
+    opacity: 0.8;
+    transform: translate(7px, 2px);
+    clip-path: inset(50% 0 20% 0);
+  }
+}
+
+@keyframes glitchTearY {
+  0% {
+    opacity: 0.7;
+    transform: translate(-6px, 1px);
+    clip-path: inset(25% 0 45% 0);
+  }
+  25% {
+    opacity: 0.75;
+    transform: translate(5px, -2px);
+    clip-path: inset(60% 0 15% 0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-7px, 1px);
+    clip-path: inset(5% 0 70% 0);
+  }
+  75% {
+    opacity: 0.7;
+    transform: translate(4px, 0);
+    clip-path: inset(45% 0 30% 0);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translate(-6px, 1px);
+    clip-path: inset(25% 0 45% 0);
+  }
+}
+
+/* Main logo slicing during glitch burst */
+@keyframes glitchCorrupt {
+  0% {
+    clip-path: inset(0 0 80% 0);
+    transform: translate(-3px, 0);
+  }
+  20% {
+    clip-path: inset(20% 0 40% 0);
+    transform: translate(4px, 0);
+  }
+  40% {
+    clip-path: inset(60% 0 10% 0);
+    transform: translate(-2px, 0);
+  }
+  60% {
+    clip-path: inset(10% 0 60% 0);
+    transform: translate(3px, 0);
+  }
+  80% {
+    clip-path: inset(50% 0 20% 0);
+    transform: translate(-4px, 0);
+  }
+  100% {
+    clip-path: inset(0 0 80% 0);
+    transform: translate(-3px, 0);
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .loader::before {
+    animation: none;
+  }
+
+  .logoMain path {
+    animation: none;
+    fill: #E04458;
+    stroke-opacity: 0;
+  }
+
+  .logoMain path:nth-child(2) {
+    fill: #ffffff;
+  }
+
+  .plate {
+    display: none;
+  }
+
+  .blinkDot {
+    animation: none;
+    opacity: 0.4;
+  }
+}

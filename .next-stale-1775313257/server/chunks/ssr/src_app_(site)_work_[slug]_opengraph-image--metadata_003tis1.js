@@ -1,0 +1,3 @@
+module.exports=[37392,a=>{"use strict";a.i(7997),a.i(99475);var b=a.i(9311),c=a.i(52425);let d={alt:"Noah Williams — Creative Director",contentType:"image/png",generateStaticParams:function(){return b.CASE_STUDIES.map(a=>({slug:a.slug}))},size:{width:1200,height:630}};async function e(a){let{__metadata_id__:b,...e}=await a.params,f=(0,c.fillMetadataSegment)("/(site)/work/[slug]",e,"opengraph-image",!1);return[function(a){let b={alt:a.alt,type:a.contentType||"image/png",url:f+"?8dd7e3db471650f8"},{size:c}=a;return c&&(b.width=c.width,b.height=c.height),b}(d)]}a.s(["default",0,e],37392)},56616,a=>{a.n(a.i(37392))}];
+
+//# sourceMappingURL=src_app_%28site%29_work_%5Bslug%5D_opengraph-image--metadata_003tis1.js.map

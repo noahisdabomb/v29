@@ -1,0 +1,3 @@
+module.exports=[1255,a=>{"use strict";var b=a.i(87924),c=a.i(72131),d=a.i(72934),e=a.i(13406);let f=(0,d.default)(async()=>{},{loadableGenerated:{modules:[74102]},ssr:!1});a.s(["default",0,function(){return(0,c.useEffect)(()=>{e.useScrollStore.getState().setCycleProgress(.52)},[]),(0,b.jsx)("div",{style:{width:"100vw",height:"100vh",background:"#0a0a08"},children:(0,b.jsx)(f,{reducedMotion:!1})})}])}];
+
+//# sourceMappingURL=src_app_clock-test_page_tsx_0mj~4l~._.js.map

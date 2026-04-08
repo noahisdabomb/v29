@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///sessions/laughing-quirky-clarke/mnt/noahisdabomb-v26/src/app/%28site%29/loading.tsx"],"sourcesContent":["export default function Loading() {\n  return (\n    <div className=\"flex min-h-dvh items-center justify-center bg-bg-deep\">\n      <div className=\"size-8 animate-spin rounded-full border-2 border-border-subtle border-t-accent\" />\n    </div>\n  );\n}\n"],"names":["Loading","className"],"mappings":";;;;;;AAAe,SAASA;IACtB,qBACE,8OAAC;QAAIC,WAAU;kBACb,cAAA,8OAAC;YAAIA,WAAU;;;;;;;;;;;AAGrB"}}]
+}

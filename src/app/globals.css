@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════════
+   ANALOG VIVID DESIGN SYSTEM (Direction D)
+   "Saul Bass with neon ink. Hot MCM on warm black."
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ─── Backgrounds — warm blacks ─── */
+  --bg-deep: #0E0C0A;
+  --bg-card: #1A1815;
+  --bg-elevated: #242119;
+  --bg-surface: rgba(245, 240, 230, 0.03);
+  --bg-base: #0E0C0A;
+
+  /* ─── Accents — three-color system ─── */
+  --accent: #E04458;           /* Magenta — primary CTA, emphasis */
+  --accent-secondary: #DEB42E; /* Gold — tags, highlights, status */
+  --accent-tertiary: #1E90CF;  /* Cerulean — links, cool accent */
+
+  /* ─── Text ─── */
+  --text-primary: #F5F0E6;    /* Cream */
+  --text-secondary: #C4BAA9;   /* Warm stone — lifted for readability */
+  --text-tertiary: #A39A8F;    /* Faded stone — WCAG AA 4.5:1 on bg-deep */
+  --text-faint: #8A847C;       /* Meta, timestamps — WCAG AA 4.5:1 on bg-deep */
+
+  /* ─── Borders ─── */
+  --border-subtle: rgba(245, 240, 230, 0.06);
+  --border-accent: rgba(224, 68, 88, 0.12);
+
+  /* ─── Derived / Semantic ─── */
+  --accent-glow: rgba(224, 68, 88, 0.25);
+  --accent-dim: rgba(224, 68, 88, 0.12);
+  --accent-secondary-glow: rgba(222, 180, 46, 0.15);
+  --accent-tertiary-glow: rgba(30, 144, 207, 0.12);
+
+  /* ─── Hero palette (aliases site tokens for hero section) ─── */
+  --hero-bg: #0E0C0A;
+  --hero-magenta: #E04458;
+  --hero-cream: #F5F0E6;
+  --hero-gold: #DEB42E;
+  --hero-cerulean: #1E90CF;
+  --hero-stone: #C4BAA9;
+
+  /* ─── Typography ─── */
+  --font-body: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-archivo);
+  --font-display: var(--font-nc-extended);
+  --font-ui: var(--font-nc-normal);
+
+  /* ─── Spacing ─── */
+  --nav-height: 56px;
+
+  /* Typography Scale (8 steps) */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.5rem;     /* 24px */
+  --text-2xl: 2rem;      /* 32px */
+  --text-3xl: 3rem;      /* 48px */
+  --text-4xl: 4rem;      /* 64px */
+
+  /* Spacing Scale (section / component / micro) */
+  --space-1: 0.25rem;    /* 4px - micro */
+  --space-2: 0.5rem;     /* 8px - micro */
+  --space-3: 0.75rem;    /* 12px - component */
+  --space-4: 1rem;       /* 16px - component */
+  --space-6: 1.5rem;     /* 24px - component */
+  --space-8: 2rem;       /* 32px - section */
+  --space-12: 3rem;      /* 48px - section */
+  --space-16: 4rem;      /* 64px - section */
+  --space-24: 6rem;      /* 96px - section */
+  --space-32: 8rem;      /* 128px - page */
+
+  /* ─── Z-Index Scale ─── */
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-nav: 30;
+  --z-nav-panel: 31;
+  --z-nav-trigger: 32;
+  --z-concierge: 40;
+  --z-overlay: 50;
+
+  /* ─── Shadow Elevation ─── */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 28px 90px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 30px rgba(224, 68, 88, 0.25);
+
+  /* ─── Border Radius ─── */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 2rem;
+  --radius-full: 9999px;
+
+  /* ─── Transitions ─── */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Tailwind v4 theme tokens ─── */
+@theme inline {
+  /* Backgrounds */
+  --color-bg-deep: #0E0C0A;
+  --color-bg-card: #1A1815;
+  --color-bg-elevated: #242119;
+  --color-bg-surface: rgba(245, 240, 230, 0.03);
+  --color-bg-base: #0E0C0A;
+
+  /* Accents */
+  --color-accent: #E04458;
+  --color-accent-secondary: #DEB42E;
+  --color-accent-tertiary: #1E90CF;
+  --color-accent-glow: rgba(224, 68, 88, 0.25);
+  --color-accent-dim: rgba(224, 68, 88, 0.12);
+  --color-accent-secondary-glow: rgba(222, 180, 46, 0.15);
+  --color-accent-tertiary-glow: rgba(30, 144, 207, 0.12);
+
+  /* Text — synced with :root tokens for consistency */
+  --color-text-primary: #F5F0E6;
+  --color-text-secondary: #C4BAA9;
+  --color-text-tertiary: #A39A8F;
+  --color-text-faint: #8A847C;
+
+  /* Borders */
+  --color-border-subtle: rgba(245, 240, 230, 0.06);
+  --color-border-accent: rgba(224, 68, 88, 0.12);
+
+  /* Hero */
+  --color-hero-bg: #0E0C0A;
+  --color-hero-magenta: #E04458;
+  --color-hero-cream: #F5F0E6;
+  --color-hero-gold: #DEB42E;
+  --color-hero-cerulean: #1E90CF;
+  --color-hero-stone: #C4BAA9;
+
+  /* Fonts */
+  --font-sans: var(--font-geist);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-archivo);
+  --font-display: var(--font-nc-extended);
+  --font-ui: var(--font-nc-normal);
+
+  /* Animation */
+  --animate-fade-in: fade-in 0.4s ease-out both;
+}
+
+/* ─── Base styles ─── */
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Suppress focus ring on inputs inside composed containers that show their own focus-within indicator */
+.concierge-input:focus-visible {
+  outline: none;
+}
+
+/* Marquee animation for footer */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Marquee reverse (hero bottom ticker) */
+@keyframes marqueeReverse {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Colon blink for time-mask */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Work page filter transition */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mouse spotlight — warm magenta tint, size responds to scroll velocity */
+.spotlight-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  background: radial-gradient(
+    calc(600px * var(--spotlight-scale, 1)) circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(224, 68, 88, 0.02) 0%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+body:not(.loading) .spotlight-layer {
+  opacity: 1;
+}
+
+/* Status dot ping — limited to 3 pings */
+@keyframes ping-limited {
+  75%, 100% { transform: scale(2); opacity: 0; }
+}
+
+.animate-ping-limited {
+  animation: ping-limited 1s cubic-bezier(0, 0, 0.2, 1) 3;
+}
+
+/* Concierge speech bubble pop-in */
+@keyframes bubblePop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-bubble-pop {
+  animation: bubblePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Scroll-to-top arrow bounce */
+@keyframes arrowBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Concierge content state transitions */
+@keyframes conciergeFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-concierge-fade-in {
+  animation: conciergeFadeIn 200ms var(--ease-out) both;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}

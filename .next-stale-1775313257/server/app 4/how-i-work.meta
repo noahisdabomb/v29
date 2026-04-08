@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/(site)/layout,_N_T_/(site)/how-i-work/layout,_N_T_/(site)/how-i-work/page,_N_T_/how-i-work"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/!KHNpdGUp/how-i-work/__PAGE__",
+    "/!KHNpdGUp/how-i-work",
+    "/!KHNpdGUp",
+    "/_index",
+    "/_head"
+  ]
+}
