@@ -600,6 +600,12 @@ function LaptopViewportOverlay({
   );
   const overlayOpacity = seqState.greenOverlayOpacity;
 
+  // Hooks MUST be called before any early return (Rules of Hooks)
+  const eyebrowText = CYCLE_LAPTOP.inboxEyebrow;
+  const eyebrowLetters = useMemo(() => eyebrowText.split(''), [eyebrowText]);
+  const titleText = CYCLE_LAPTOP.inboxTitle;
+  const titleWords = useMemo(() => titleText.split(/\s+/), [titleText]);
+
   if (overlayOpacity <= 0.001) return null;
 
   const slamT = reducedMotion ? 1 : overlayOpacity;
@@ -628,14 +634,6 @@ function LaptopViewportOverlay({
 
   // Atmospheric glow intensity grows with each email
   const glowIntensity = 0.3 + visibleCount * 0.15;
-
-  // Eyebrow text split into letters
-  const eyebrowText = CYCLE_LAPTOP.inboxEyebrow;
-  const eyebrowLetters = useMemo(() => eyebrowText.split(''), [eyebrowText]);
-
-  // Title text split into words
-  const titleText = CYCLE_LAPTOP.inboxTitle;
-  const titleWords = useMemo(() => titleText.split(/\s+/), [titleText]);
 
   return (
     <div
