@@ -289,38 +289,22 @@ function syncTimeline(
 }
 
 function syncRailProgress(storyProgress: number): number {
-  const [handoff, work, alarm, delivered] = CYCLE_TIME_MARKERS;
+  const [work, alarm, delivered] = CYCLE_TIME_MARKERS;
 
   // Before logIntro ends: rail at 0
   if (storyProgress <= PHASES.logIntro.out) {
     return 0;
   }
 
-  // LogIntro.out -> phone hold: 0 to handoff marker
-  if (storyProgress < PHASES.phone.holdEnd) {
-    return lerp(
-      0,
-      handoff.position,
-      ease(
-        clamp(
-          (storyProgress - PHASES.logIntro.out) /
-            Math.max(PHASES.phone.holdEnd - PHASES.logIntro.out, 0.001),
-          0,
-          1,
-        ),
-      ),
-    );
-  }
-
-  // Phone hold -> phone outro: handoff to work marker
+  // LogIntro.out -> phone.out: 0 to work marker (phone activity = overnight work)
   if (storyProgress < PHASES.phone.out) {
     return lerp(
-      handoff.position,
+      0,
       work.position,
       ease(
         clamp(
-          (storyProgress - PHASES.phone.holdEnd) /
-            Math.max(PHASES.phone.out - PHASES.phone.holdEnd, 0.001),
+          (storyProgress - PHASES.logIntro.out) /
+            Math.max(PHASES.phone.out - PHASES.logIntro.out, 0.001),
           0,
           1,
         ),
@@ -328,7 +312,7 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Phone out -> clock holdEnd: work to alarm marker
+  // Phone.out -> clock.holdEnd: work to alarm marker (clock scene = alarm)
   if (storyProgress < PHASES.clock.holdEnd) {
     return lerp(
       work.position,
@@ -344,7 +328,7 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Clock holdEnd -> laptop holdEnd: alarm to delivered marker
+  // Clock.holdEnd -> laptop.holdEnd: alarm to delivered marker (laptop emails)
   if (storyProgress < PHASES.laptop.holdEnd) {
     return lerp(
       alarm.position,
@@ -360,15 +344,15 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Laptop holdEnd -> outroStart: delivered to 1.0
-  if (storyProgress < PHASES.laptop.outroStart) {
+  // Laptop.holdEnd -> workTransition.in: delivered to 1.0
+  if (storyProgress < PHASES.workTransition.in) {
     return lerp(
       delivered.position,
       1.0,
       ease(
         clamp(
           (storyProgress - PHASES.laptop.holdEnd) /
-            Math.max(PHASES.laptop.outroStart - PHASES.laptop.holdEnd, 0.001),
+            Math.max(PHASES.workTransition.in - PHASES.laptop.holdEnd, 0.001),
           0,
           1,
         ),
@@ -401,19 +385,19 @@ function getRailPresence(storyProgress: number): number {
     );
   }
 
-  // Hold at 0.94 until laptop outro
-  if (storyProgress < PHASES.laptop.outroStart) {
+  // Hold at 0.94 through laptop (including full-screen inbox push)
+  if (storyProgress < PHASES.workTransition.in) {
     return 0.94;
   }
 
-  // Fade to 0 during laptop outro → workTransition
+  // Fade to 0 during workTransition
   return lerp(
     0.94,
     0,
     ease(
       clamp(
-        (storyProgress - PHASES.laptop.outroStart) /
-          Math.max(PHASES.workTransition.in - PHASES.laptop.outroStart, 0.001),
+        (storyProgress - PHASES.workTransition.in) /
+          Math.max(PHASES.workTransition.out - PHASES.workTransition.in, 0.001),
         0,
         1,
       ),

@@ -414,9 +414,8 @@ export const SPLIT_FLIP = {
 } as const;
 
 export const CYCLE_TIME_MARKERS = [
-  { id: 'handoff', label: 'Handoff', position: 0.08 },
-  { id: 'work', label: 'Overnight work', position: 0.30 },
-  { id: 'alarm', label: 'Alarm', position: 0.58 },
+  { id: 'work', label: 'Overnight work', position: 0.12 },
+  { id: 'alarm', label: 'Alarm', position: 0.50 },
   { id: 'delivered', label: 'Delivered', position: 0.88 },
 ] as const;
 

@@ -882,7 +882,7 @@ export default function CycleSection() {
         <CycleAtmosphere />
         <CinematicLetterbox cycleProgress={cycleProgress ?? 0} reducedMotion={reducedMotion} />
         <ActivePhaseAnnouncer />
-        <div style={{ opacity: clamp(1 - ((cycleProgress ?? 0) - 0.86) / 0.08, 0, 1) }}>
+        <div style={{ opacity: clamp(1 - ((cycleProgress ?? 0) - 0.96) / 0.03, 0, 1) }}>
           <CycleTimeRail storyState={storyState} visitorCity={safeVisitorCity} />
         </div>
         <CycleDebugPanel
