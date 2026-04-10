@@ -606,6 +606,37 @@ function LaptopViewportOverlay({
   const slamScale = reducedMotion ? 1 : springScale(slamT);
   const slamBlur = reducedMotion ? 0 : (1 - slamT) * 12;
 
+  // --- Cinematic timing ---
+  // Per-email reveal with wider spacing (empty shell appears first)
+  const emailTs = emails.map((_, i) => {
+    const threshold = 0.35 + i * 0.14;
+    return reducedMotion ? 1 : ease(clamp((overlayOpacity - threshold) / 0.18, 0, 1));
+  });
+
+  // Badge count-up: count of emails that have crossed 50% reveal
+  const visibleCount = emailTs.filter(t => t >= 0.5).length;
+
+  // Badge scale pulse: briefly enlarges when a new email crosses threshold
+  const badgeRawT = visibleCount > 0
+    ? emailTs[visibleCount - 1] ?? 1
+    : 0;
+  const badgePulse = reducedMotion ? 1 : 1 + 0.2 * Math.max(0, 1 - badgeRawT * 2);
+
+  // Header timing — eyebrow types in first, title cascades after
+  const headerT = reducedMotion ? 1 : clamp(overlayOpacity * 4, 0, 1);
+  const titleT = reducedMotion ? 1 : clamp((overlayOpacity - 0.15) * 3, 0, 1);
+
+  // Atmospheric glow intensity grows with each email
+  const glowIntensity = 0.3 + visibleCount * 0.15;
+
+  // Eyebrow text split into letters
+  const eyebrowText = CYCLE_LAPTOP.inboxEyebrow;
+  const eyebrowLetters = useMemo(() => eyebrowText.split(''), [eyebrowText]);
+
+  // Title text split into words
+  const titleText = CYCLE_LAPTOP.inboxTitle;
+  const titleWords = useMemo(() => titleText.split(/\s+/), [titleText]);
+
   return (
     <div
       className="pointer-events-none fixed inset-0 z-[9] flex items-center justify-center"
@@ -615,8 +646,21 @@ function LaptopViewportOverlay({
       }}
       aria-hidden="true"
     >
+      {/* Atmospheric glow bloom behind card */}
       <div
-        className="w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.5)]"
+        className="absolute rounded-full"
+        style={{
+          width: '130%',
+          height: '130%',
+          opacity: reducedMotion ? 0 : glowIntensity,
+          background: `radial-gradient(circle, rgba(255,200,180,${glowIntensity * 0.18}) 0%, rgba(224,68,88,${glowIntensity * 0.08}) 40%, transparent 65%)`,
+          filter: 'blur(60px)',
+          willChange: glowIntensity < 0.85 ? 'opacity' : 'auto',
+        }}
+      />
+
+      <div
+        className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.5)]"
         style={{
           background: 'rgba(26,16,24,0.92)',
           backdropFilter: 'blur(24px)',
@@ -646,9 +690,15 @@ function LaptopViewportOverlay({
               <span className="text-[12px] font-semibold text-white">Inbox</span>
               <span
                 className="flex size-5 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                style={{ background: '#E04458' }}
+                style={{
+                  background: '#E04458',
+                  transform: `scale(${badgePulse})`,
+                  boxShadow: visibleCount > 0
+                    ? `0 0 ${6 + visibleCount * 3}px rgba(224,68,88,${0.3 + visibleCount * 0.1})`
+                    : 'none',
+                }}
               >
-                {emails.length}
+                {visibleCount}
               </span>
             </div>
             {['Sent', 'Drafts', 'Archive'].map((folder) => (
@@ -660,45 +710,86 @@ function LaptopViewportOverlay({
 
           {/* Main content */}
           <div className="flex-1 px-5 py-4">
-            {/* Header */}
-            <div
-              className="mb-4 border-b border-white/8 pb-3"
-              style={{
-                opacity: reducedMotion ? 1 : clamp(overlayOpacity * 3, 0, 1),
-              }}
-            >
-              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/50">
-                {CYCLE_LAPTOP.inboxEyebrow}
+            {/* Header — cinematic letter/word reveal */}
+            <div className="mb-4 border-b border-white/8 pb-3">
+              {/* Eyebrow — letter-by-letter stagger */}
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/50" aria-label={eyebrowText}>
+                {reducedMotion ? eyebrowText : eyebrowLetters.map((char, i) => {
+                  const charT = clamp((headerT - i * 0.04) * 6, 0, 1);
+                  return (
+                    <span
+                      key={i}
+                      aria-hidden="true"
+                      style={{ opacity: charT }}
+                    >
+                      {char}
+                    </span>
+                  );
+                })}
               </p>
-              <p className="mt-1.5 font-heading text-lg font-bold leading-tight text-white/90">
-                {CYCLE_LAPTOP.inboxTitle}
+              {/* Title — word-by-word cascade with blur */}
+              <p
+                className="mt-1.5 font-heading text-lg font-bold leading-tight text-white/90"
+                aria-label={titleText}
+              >
+                {reducedMotion ? titleText : titleWords.map((word, i) => {
+                  const wordT = clamp((titleT - i * 0.08) * 4, 0, 1);
+                  return (
+                    <span
+                      key={i}
+                      aria-hidden="true"
+                      className="inline-block"
+                      style={{
+                        opacity: wordT,
+                        transform: wordT < 1 ? `translateY(${(1 - wordT) * 10}px)` : 'none',
+                        filter: wordT < 1 ? `blur(${(1 - wordT) * 6}px)` : 'none',
+                        marginRight: '0.3em',
+                      }}
+                    >
+                      {word}
+                    </span>
+                  );
+                })}
               </p>
             </div>
 
-            {/* Email list */}
+            {/* Email list — cinematic stagger with notification pulse */}
             {emails.map((email, index) => {
-              const revealThreshold = (index + 1) / (emails.length + 1);
-              const emailT = reducedMotion
-                ? 1
-                : ease(clamp((overlayOpacity - revealThreshold) / 0.25, 0, 1));
+              const emailT = emailTs[index] ?? 1;
               const isActive = index === emails.length - 1;
               const sender = SENDERS[index] ?? 'Team';
               const avatarColor = AVATAR_COLORS[index] ?? '#E04458';
 
+              // Notification pulse: flashes during the row's entrance then fades
+              const pulseOpacity = !reducedMotion && emailT > 0.05 && emailT < 0.92
+                ? (1 - emailT) * 0.35
+                : 0;
+
               return (
                 <div
                   key={index}
-                  className="rounded-lg py-3 px-3 -mx-3"
+                  className="relative rounded-lg py-3 px-3 -mx-3"
                   style={{
                     opacity: emailT,
                     transform: reducedMotion
                       ? 'none'
                       : `translateX(${(1 - emailT) * 60}px)`,
-                    background: isActive ? 'rgba(255,255,255,0.06)' : 'transparent',
-                    borderLeft: isActive ? '2px solid #E04458' : '2px solid transparent',
+                    background: isActive && emailT > 0.8 ? 'rgba(255,255,255,0.06)' : 'transparent',
+                    borderLeft: isActive && emailT > 0.8 ? '2px solid #E04458' : '2px solid transparent',
                   }}
                 >
-                  <div className="flex items-start gap-3">
+                  {/* Notification pulse glow */}
+                  {pulseOpacity > 0.01 && (
+                    <div
+                      className="absolute inset-0 rounded-lg"
+                      style={{
+                        opacity: pulseOpacity,
+                        background: 'radial-gradient(ellipse at 20% 50%, rgba(224,68,88,0.3) 0%, transparent 70%)',
+                      }}
+                    />
+                  )}
+
+                  <div className="relative flex items-start gap-3">
                     {/* Avatar */}
                     <span
                       className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white/90"
