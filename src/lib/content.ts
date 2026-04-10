@@ -46,8 +46,7 @@ export const NAV_LINKS: NavLink[] = [
 // ---------------------------------------------------------------------------
 export const HERO = {
   timezoneLabel: 'Bangkok (GMT+7). Online now',
-  headline: "It\u2019s tomorrow here.\nYour work is already started.",
-  subline: 'One senior creative director. The strategy, the vision, the final files. All held by one person, 12 hours ahead of you.',
+  headline: "It\u2019s tomorrow here.\nYour work has already started.",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -67,8 +66,6 @@ export const PROGRESS_MILESTONES: ProgressMilestone[] = [
 export const CYCLE_STATEMENT = {
   sectionLabel: 'The Cycle',
   headline: "Your team\u2019s asleep. The deadline isn\u2019t.",
-  subline:
-    'Strategy, creative direction, and final production. Held by one senior lead who finds the insight, then builds the campaign around it. Overnight.',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -77,7 +74,7 @@ export const CYCLE_STATEMENT = {
 export const CYCLE_HANDOFF = {
   sectionLabel: 'Overnight Handoff',
   headline: 'End of your day. Beginning of mine.',
-  subline: 'Your brief is my morning coffee.',
+  subline: '',
   bkkLabel: 'Bangkok, GMT+7',
   visitorLabel: 'Your city',
   bkkIndicator: 'Working',
@@ -112,29 +109,28 @@ export const CYCLE_HANDOFF_STEPS: CycleSplitStep[] = [
 // Cycle section -- Log Intro phase
 // ---------------------------------------------------------------------------
 export const CYCLE_LOG_INTRO = {
-  sectionLabel: 'Overnight Proof',
+  sectionLabel: '',
   headline: 'While you slept, the work kept moving.',
-  subline:
-    'Strategy sharpened. Frames cut. Files lined up before your first coffee.',
+  subline: '',
 } as const;
 
 // ---------------------------------------------------------------------------
 // Cycle section -- Clock phase
 // ---------------------------------------------------------------------------
 export const CYCLE_CLOCK = {
-  lead: '7:00 AM',
+  lead: '8:00 PM',
   headline: '',
-  subline: 'Vintage flip clock. Brand-green pulse. Morning starts with momentum.',
+  subline: 'Morning starts with momentum.',
 } as const;
 
 // ---------------------------------------------------------------------------
 // Cycle section -- Laptop phase (closed glow -> centered notification -> inbox)
 // ---------------------------------------------------------------------------
 export const CYCLE_LAPTOP = {
-  alertTime: '7:00 AM',
+  alertTime: '8:00 PM',
   alertTitle: 'Campaign Ready',
   alertSub: 'Brief locked. Files are lining up.',
-  popupEyebrow: 'Morning briefing',
+  popupEyebrow: '',
   popupTitle: 'Campaign Ready',
   popupSubtitle: 'Strategy shaped. Assets staged. Ready before the room logs on.',
   inboxEyebrow: 'Morning briefing',
@@ -170,7 +166,7 @@ export const LAPTOP_BRIEFING_META = [
 export const CYCLE_WORK_TRANSITION = {
   sectionLabel: 'Selected Work',
   headline: 'The work that got me here.',
-  subline: 'And out of there.',
+  subline: 'And out of the agency.',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -321,11 +317,11 @@ export const WORK_PANELS: WorkPanel[] = [
     number: '02',
     title: 'Gila River\nResorts & Casinos',
     tagline:
-      'Casinos talk to gamblers. We talked to everyone else.',
+      'Casinos talk to gamblers. We talked to everyone else. Then we turned a casino into the place to be.',
     description:
       '\u201CYou Do You\u201D gave an entire brand permission to be inclusive without ever saying the word. Four campaign chapters, $750M property expansion, audience getting younger every quarter.',
     sector: 'Resorts & Casinos',
-    tags: ['Resorts & Casinos', 'Brand Campaign', 'Film', '3D OOH'],
+    tags: ['Resorts & Casinos', 'Brand Campaign', 'Film', '3D', 'OOH'],
     stats: [
       { label: 'Campaign Chapters', value: '4' },
       { label: 'Annual Revenue', value: '$750M' },
@@ -338,7 +334,7 @@ export const WORK_PANELS: WorkPanel[] = [
     number: '03',
     title: 'Coca-Cola',
     tagline:
-      'From a film about first dates to running social for the most recognized brand on earth.',
+      'From a film about first dates to running social for the most recognized brand on earth. Two chapters, one through-line: make people feel something real.',
     description:
       'Short film for Coke x Carmike, then a 55-person real-time newsroom across Coke, Diet Coke, Fanta, Sprite. The bigger the brand, the more craft matters in the smallest places.',
     sector: 'Beverage',
@@ -372,14 +368,14 @@ export const WORK_PANELS: WorkPanel[] = [
     number: '05',
     title: 'Toyota',
     tagline:
-      '381 horses under the hood. Zero limits on how we told the story.',
+      'American truck loyalty runs deep. We made Toyota part of the conversation.',
     description:
       "Ford, Chevy, Ram. American truck loyalty runs deep. We stopped apologizing for where it\u2019s built and started showing what it can do. Same energy across the full lineup: \u201CGo Anywhere, Imagine Everything.\u201D",
     sector: 'Automotive',
     tags: ['Automotive', 'Film', 'Digital', 'Social'],
     stats: [
+      { label: 'HP Flagship', value: '380' },
       { label: 'Vehicle Lines', value: '3' },
-      { label: 'Channels', value: 'Film + Digital + Social' },
     ],
     videoSrc: 'https://videos.noahisdabomb.com/toyota_tundra.mp4',
     href: '/work/toyota',
@@ -389,7 +385,7 @@ export const WORK_PANELS: WorkPanel[] = [
     number: '06',
     title: 'Delta\nAir Lines',
     tagline:
-      "We took Delta\u2019s most iconic symbol off the plane and rolled it into the streets.",
+      "We took Delta\u2019s most iconic symbol off the plane and rolled it into the streets. Then the whole country wanted one.",
     description:
       'The beverage cart is the most human moment in air travel. We gave it a stage. \u201CCheer Carts\u201D deployed across five cities. Real pilots, real flight attendants, Biscoff cookies. 98% positive sentiment.',
     sector: 'Travel',
@@ -409,7 +405,7 @@ export const WORK_PANELS: WorkPanel[] = [
 // ---------------------------------------------------------------------------
 export const WORK_HEADER = {
   sectionLabel: 'Selected Work',
-  headline: 'The work that got me here.\nAnd out of there.',
+  headline: 'The work that got me here.\nAnd out of the agency.',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -534,7 +530,7 @@ export const SCALE = {
   sectionLabel: 'Built to Scale',
   headline: 'One person is the default. Not the limit.',
   paragraphs: [
-    'Your creative director is based in Bangkok. One of the deepest creative talent pools in Southeast Asia. Designers, editors, animators, producers, developers. World-class people who\u2019ve worked on global brands, available at a fraction of what you\u2019d pay stateside.',
+    'Your creative director is based in Bangkok. One of the deepest creative talent pools in Southeast Asia. Designers, editors, animators, producers, developers. World-class people who\u2019ve worked on global brands, available at rates that\u2019ll change how you think about overhead.',
     "When your scope grows, the team scales around the brief. Not around some agency org chart. You still get one point of contact. One creative vision. One person accountable for the output. But behind that, exactly the firepower your project needs.",
     "The good freelancers know when to bring in backup. This isn\u2019t about being a hero. It\u2019s about getting your work right.",
   ],
@@ -543,21 +539,21 @@ export const SCALE = {
 export const SCALE_ITEMS: ScaleItem[] = [
   {
     icon: '+1',
-    title: 'Small brief? One person.',
+    title: 'One person. End to end.',
     description:
       "Brand strategy, a campaign deck, a brand identity refresh. Handled end to end. No overhead. No layers. You\u2019re paying for a senior creative, and that\u2019s exactly what shows up.",
   },
   {
     icon: '+5',
-    title: 'Bigger brief? The team builds around it.',
+    title: 'Five specialists. One direction.',
     description:
       'A full integrated campaign needs more hands. Your creative director taps into a local network of designers, editors, motion artists and assembles a team purpose-built for your project. They work under one direction. You talk to one person.',
   },
   {
     icon: '+10',
-    title: 'Full production? Already proven.',
+    title: 'Ten-plus. Full production crew.',
     description:
-      'Multi-market campaigns with production teams across Southeast Asia. Film shoots, post-production, localization. The infrastructure is here, the talent is proven, and your cost is a fraction of what you\u2019re used to.',
+      'Multi-market campaigns with production teams across Southeast Asia. Film shoots, post-production, localization. The infrastructure is here, the talent is proven, and your cost is a shift from what you\u2019re used to.',
   },
   {
     icon: '$$',
@@ -672,7 +668,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Impressions', value: '3.75B' },
       { label: 'Aided Awareness', value: '40%+' },
     ],
-    services: ['Positioning', 'Campaign Platform', 'Film', 'Social'],
+    services: ['Fitness', 'Integrated', 'Film', 'Brand Identity'],
     videoSrc: 'https://videos.noahisdabomb.com/orangetheory_25hour.mp4',
     featured: true,
     cta: { label: 'Book a Strategy Call', href: CAL_COM_URL, external: true },
@@ -713,7 +709,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     sector: 'Resorts & Casinos',
     number: '02',
     title: 'Gila River Resorts & Casinos',
-    tagline: 'Casinos talk to gamblers. We talked to everyone else.',
+    tagline: 'Casinos talk to gamblers. We talked to everyone else. Then we turned a casino into the place to be.',
     description: '\u201CYou Do You\u201D gave the brand permission to be inclusive without ever saying the word. Four campaign chapters, custom animation, and a platform that kept skewing younger every quarter.',
     shortOutcome: 'Four campaign chapters, an audience that kept getting younger, and a $750M property expansion launched on a platform built from three words.',
     challenge: 'Every casino in the desert was screaming the same thing \u2014 jackpots, buffets, pool parties. A whole generation looked at that and said \u201Cnot for me.\u201D We had to make the brand feel like a place for everyone without losing the people already walking in the door.',
@@ -724,11 +720,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcomes: [],
     metrics: [
       { label: 'Campaign Chapters', value: '4' },
-      { label: 'Expansion Value', value: '$750M' },
-      { label: 'New Property Launch', value: '$180M' },
-      { label: 'The Whole Point', value: 'You' },
+      { label: 'Annual Revenue', value: '$750M' },
     ],
-    services: ['Brand Strategy', 'Campaign Development', 'Film', 'Social'],
+    services: ['Resorts & Casinos', 'Brand Campaign', 'Film', '3D', 'OOH'],
     videoSrc: 'https://videos.noahisdabomb.com/gila_river_you_do_you.mp4',
     cta: { label: 'Talk Through Your Brief', href: CAL_COM_URL, external: true },
     briefHeadline: 'Millennials don\u2019t go to casinos. That was the problem. And the opportunity.',
@@ -761,7 +755,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     sector: 'Beverage',
     number: '03',
     title: 'Coca-Cola',
-    tagline: 'From a film about first dates to running social for the most recognized brand on earth.',
+    tagline: 'From a film about first dates to running social for the most recognized brand on earth. Two chapters, one through-line: make people feel something real.',
     description: 'A short film about first dates at the movies. Then a 55-person real-time newsroom across Coke, Diet Coke, Fanta, and Sprite. Two chapters, same lesson: the brand isn\u2019t the story.',
     shortOutcome: 'A short film that earned Carmike\u2019s first brand integration, a 55-person newsroom that doubled social engagement, and the proof that craft matters most when the brand is already the most famous thing in the room.',
     challenge: 'Coca-Cola doesn\u2019t need awareness. It needs to feel human. That\u2019s harder than it sounds when you\u2019re the most recognized brand on earth and every piece of content has to move at the speed of culture.',
@@ -773,9 +767,8 @@ export const CASE_STUDIES: CaseStudy[] = [
     metrics: [
       { label: 'Platforms', value: '5' },
       { label: 'Brands', value: '4' },
-      { label: 'Person Newsroom', value: '55' },
     ],
-    services: ['Film', 'Social Systems', 'Creative Direction', 'Editorial'],
+    services: ['Global', 'Film', 'Social', 'Real-time'],
     videoSrc: 'https://videos.noahisdabomb.com/coke_date_night_cover_v1.mp4',
     featured: true,
     cta: { label: 'Book a Strategy Call', href: CAL_COM_URL, external: true },
@@ -818,11 +811,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcomes: [],
     metrics: [
       { label: 'Languages', value: '13+' },
-      { label: 'Assets Produced', value: '100+' },
-      { label: 'Team Directed', value: '15' },
-      { label: 'Markets Reached', value: '30+' },
+      { label: 'Assets', value: '100+' },
     ],
-    services: ['Integrated', 'Film', 'Social', 'OOH', 'Digital', 'Transcreation'],
+    services: ['Tourism', 'Integrated', 'Film', 'Social'],
     videoSrc: 'https://videos.noahisdabomb.com/visitusa_hero.mp4',
     featured: true,
     cta: { label: 'Let\u2019s Talk About Scale', href: CAL_COM_URL, external: true },
@@ -856,29 +847,29 @@ export const CASE_STUDIES: CaseStudy[] = [
     sector: 'Automotive',
     number: '05',
     title: 'Toyota',
-    tagline: '381 horses under the hood. Zero limits on how we told the story.',
+    tagline: '380 horses under the hood. Zero limits on how we told the story.',
     description: 'We stopped apologizing for where the Tundra was built and started showing what it could do. Then extended that confidence across the whole lineup with \u201CGo Anywhere, Imagine Everything.\u201D',
     shortOutcome: 'Tundra repositioned from underdog to contender, three vehicle lines unified under one creative platform, and a dealership confidence shift that changed how the Southeast sold Toyota trucks.',
-    challenge: 'Ford, Chevy, Ram \u2014 American trucks are a religion and Toyota was the outsider. They had 381 horses and ridiculous towing capacity, but none of that mattered if truck buyers wouldn\u2019t even give it a look.',
+    challenge: 'Ford, Chevy, Ram \u2014 American trucks are a religion and Toyota was the outsider. They had 380 horses and ridiculous towing capacity, but none of that mattered if truck buyers wouldn\u2019t even give it a look.',
     insight: 'Don\u2019t try to out-American the American trucks. Just out-work them. Stop apologizing for where it\u2019s built and start showing what it can do.',
     execution: [
       'The Tundra work leaned into raw capability with zero apologies \u2014 no origin-story defensiveness, just the truck doing what it does. Then we extended that creative confidence across the whole lineup. \u201CGo Anywhere, Imagine Everything\u201D tied the Tundra, Prius, and 4Runner into one belief system: your vehicle should never be the reason you don\u2019t go.',
     ],
     outcomes: [],
     metrics: [
+      { label: 'HP Flagship', value: '380' },
       { label: 'Vehicle Lines', value: '3' },
-      { label: 'Campaign Platforms', value: 'Film + Digital + Social' },
     ],
-    services: ['Campaign Development', 'Film', 'Digital', 'Social'],
+    services: ['Automotive', 'Film', 'Digital', 'Social'],
     videoSrc: 'https://videos.noahisdabomb.com/toyota_tundra.mp4',
     cta: { label: 'Book a Strategy Call', href: CAL_COM_URL, external: true },
     briefHeadline: 'American trucks are a religion. Toyota was the outsider trying to join the congregation.',
-    brief: 'The full-size truck market is the most emotionally charged category in automotive. Ford, Chevy, and Ram own the conversation. Toyota had a beast of a truck \u2014 381 horses, ridiculous towing capacity \u2014 but none of that mattered if truck buyers wouldn\u2019t even consider it.',
+    brief: 'The full-size truck market is the most emotionally charged category in automotive. Ford, Chevy, and Ram own the conversation. Toyota had a beast of a truck \u2014 380 horses, ridiculous towing capacity \u2014 but none of that mattered if truck buyers wouldn\u2019t even consider it.',
     insightHeadline: 'Stop apologizing for where it\u2019s built. Start showing what it can do.',
     pullQuote: 'We didn\u2019t try to out-American the American trucks. We just out-worked them.',
     workHeadline: 'Zero limits. Then the whole lineup.',
     work: 'The Tundra work leaned into raw capability with zero apologies. Then we extended that creative confidence across the lineup. "Go Anywhere, Imagine Everything" tied the Tundra, Prius, and 4Runner into one belief system: your vehicle should never be the reason you don\u2019t go.',
-    resultsHeadline: '381 horses. 3 vehicle lines. Full funnel.',
+    resultsHeadline: '380 horses. 3 vehicle lines. Full funnel.',
     myTake: 'Truck buyers don\u2019t want your clever ad. They want proof. We stopped trying to make the Tundra feel American and started making it feel undeniable. Respect the buyer, show them what the vehicle does, and trust that\u2019s enough.',
     agency: 'Tombras',
     role: 'Creative Director',
@@ -900,7 +891,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     sector: 'Travel',
     number: '06',
     title: 'Delta Air Lines',
-    tagline: "We took Delta\u2019s most iconic symbol off the plane and rolled it into the streets.",
+    tagline: "We took Delta\u2019s most iconic symbol off the plane and rolled it into the streets. Then the whole country wanted one.",
     description: 'We took the beverage cart off the plane and rolled it into five cities. Real pilots, real flight attendants, Biscoff cookies, and in-flight items turned into percussion instruments. 98% positive sentiment. Zero paid push.',
     shortOutcome: 'Five cities, three weeks, 98% positive sentiment, 141K new followers, and a holiday campaign that felt like a gift instead of a promotion.',
     challenge: 'Every airline sends holiday emails. Fare deals, frequent flyer bonuses, the usual. Delta wanted something different \u2014 not a promotion, but a genuine thank-you. How do you make a global airline feel personal during the most impersonal time of the year?',
@@ -911,11 +902,9 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcomes: [],
     metrics: [
       { label: 'Positive Sentiment', value: '98%' },
-      { label: 'Cities Activated', value: '5' },
-      { label: 'New Social Followers', value: '141K' },
-      { label: 'Hashtag Adoption', value: '84%' },
+      { label: 'Social Chatter YoY', value: '3X' },
     ],
-    services: ['Experiential', 'Campaign Development', 'Film', 'Social'],
+    services: ['Aviation', 'Experiential', 'Film', 'Social'],
     videoSrc: 'https://videos.noahisdabomb.com/starbucks_%23cheercart.mp4',
     cta: { label: 'Talk Through Your Brief', href: CAL_COM_URL, external: true },
     briefHeadline: 'Airlines send holiday emails. We wanted to send holiday feelings.',
@@ -957,9 +946,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     outcomes: [],
     metrics: [
       { label: 'Likelihood to Visit', value: '2.5x' },
-      { label: 'Brand Love Increase', value: '85%' },
       { label: 'Visitation Lift', value: '152%' },
-      { label: 'Category of One', value: 'Water' },
     ],
     services: ['Brand Platform', 'Film', '3D OOH', 'Experiential', 'Social', 'Digital'],
     cta: { label: 'Talk Through Your Brief', href: CAL_COM_URL, external: true },
@@ -1003,8 +990,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     metrics: [
       { label: 'Studios Worldwide', value: '1,300+' },
       { label: 'Systemwide Sales', value: '$1B' },
-      { label: 'Lead Increase', value: '67%' },
-      { label: 'Consecutive Growth', value: '5 Yrs' },
     ],
     services: ['Brand Platform', 'Film', 'Broadcast', 'OOH', 'Social', 'Digital'],
     cta: { label: 'Book a Strategy Call', href: CAL_COM_URL, external: true },
@@ -1081,15 +1066,11 @@ export const HOW_I_WORK: HowIWorkPageContent = {
     },
     {
       question: 'How fast can something meaningful happen?',
-      answer: 'In many cases the first real movement shows up the next day: reframed thinking, stronger directions, tighter copy, or an early system that gets the team unstuck. The 12-hour timezone gap means your evening brief is my morning priority.',
+      answer: 'Often the next day. Bangkok is 11\u201312 hours ahead of the US East Coast, so your end-of-day handoff lands at the start of my workday. I deliver overnight, you review fresh in the morning. We overlap 2\u20133 hours for real-time iteration. The first real movement \u2014 reframed thinking, stronger directions, tighter copy \u2014 typically shows up before your next standup.',
     },
     {
       question: 'Does this replace an agency?',
-      answer: 'Sometimes. More often it removes the gap between strategy and production, or gives a stretched team a senior creative lead who can move faster with less overhead. The goal is filling the gap, not replacing what already works.',
-    },
-    {
-      question: 'Do you work with agencies?',
-      answer: 'Regularly. I embed with agency teams as a senior creative resource. Extra CD firepower for a pitch, a second perspective on a rebrand, or steady execution support when the team is stretched thin. White-label, your brand, no ego about the credit.',
+      answer: 'Sometimes. More often it fills the gap between strategy and production, or gives a stretched team senior creative firepower. I also embed with agency teams regularly \u2014 extra CD for a pitch, a second perspective on a rebrand, or steady execution support. White-label, your brand, no ego about the credit.',
     },
     {
       question: 'What does the day-to-day actually look like?',
@@ -1098,10 +1079,6 @@ export const HOW_I_WORK: HowIWorkPageContent = {
     {
       question: 'What are the engagement options?',
       answer: 'Three ways in: a single project with a fixed scope and timeline, a monthly retainer for ongoing creative direction, or a short sprint for something specific like a pitch or launch. Most clients start with a project and move to a retainer.',
-    },
-    {
-      question: 'How does the timezone thing actually work?',
-      answer: 'Bangkok is 11-12 hours ahead of the US East Coast. So your end-of-day handoff lands at the start of my workday. I deliver overnight, you review fresh in the morning. We overlap for 2-3 hours in the afternoon/evening for real-time calls and iteration.',
     },
     {
       question: 'What if the project needs more than one person?',
@@ -1115,7 +1092,7 @@ export const PRICING_TIERS = [
   {
     name: 'Positioning Sprint',
     timeline: '2\u20133 weeks',
-    description: 'Brand strategy, positioning, campaign platform. A fraction of what an agency charges for the same caliber of thinking \u2014 without the overhead, the layers, or the three-month timeline.',
+    description: 'Brand strategy, positioning, campaign platform. World-class strategic thinking without the agency markup \u2014 or the overhead, the layers, or the three-month timeline.',
   },
   {
     name: 'Campaign Development',
@@ -1125,7 +1102,7 @@ export const PRICING_TIERS = [
   {
     name: 'Ongoing Creative Direction',
     timeline: 'Monthly',
-    description: 'Senior creative leadership on retainer. Bangkok rates, global-brand experience. A fraction of a full-time hire with none of the recruiting, onboarding, or overhead.',
+    description: 'Senior creative leadership on retainer. Bangkok rates, global-brand experience. A senior creative at a fraction of a full-time hire \u2014 no recruiting, no onboarding, no overhead.',
   },
 ] as const;
 

@@ -35,12 +35,12 @@ const CARD_DEFS: ReadonlyArray<{
     key: 'hourTens',
     fromDigit: '0',
     toDigit: '0',
-    selectProgress: () => 1, // hour tens static at '0' for 6→7 transition
+    selectProgress: (state) => state.flipHourTens,
   },
   {
     key: 'hour',
-    fromDigit: '6',
-    toDigit: '7',
+    fromDigit: '7',
+    toDigit: '8',
     selectProgress: (state) => state.flipHourOnes,
   },
   {
@@ -199,7 +199,7 @@ export function getClockFaceRenderState(
 ): ClockFaceRenderState {
   return {
     faceOpacity: 0.55 + state.faceIn * 0.45,
-    periodLabel: 'AM',
+    periodLabel: 'PM',
     cards: CARD_DEFS.map(({ key, fromDigit, toDigit, selectProgress }) =>
       resolveCardState(selectProgress(state), key, fromDigit, toDigit),
     ),
@@ -264,6 +264,7 @@ function createDebugSequenceState(
     flashAmount: 0,
     faceIn: 1,
     hold0659: 1,
+    flipHourTens: 0,
     flipMinuteOnes: 0,
     flipMinuteTens: 0,
     flipHourOnes: 0,

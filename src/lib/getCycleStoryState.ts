@@ -59,6 +59,7 @@ export interface CycleStoryState {
   railOpacity: number;
   railEmphasis: number;
   dawnAmount: number;
+  coffeeFocus: number;
   phoneFocus: number;
   clockFocus: number;
   laptopFocus: number;
@@ -75,11 +76,11 @@ export interface CycleStoryState {
 // dynamically from the visitor's timezone in CycleSection
 
 const CLOCK_OVERNIGHT_SEQUENCE: readonly TimeSequenceEntry[] = [
-  { h: 3, m: 14, ampm: 'AM' },
-  { h: 4, m: 47, ampm: 'AM' },
-  { h: 5, m: 58, ampm: 'AM' },
-  { h: 6, m: 43, ampm: 'AM' },
-  { h: 6, m: 59, ampm: 'AM' },
+  { h: 5, m: 14, ampm: 'PM' },
+  { h: 6, m: 22, ampm: 'PM' },
+  { h: 7, m: 10, ampm: 'PM' },
+  { h: 7, m: 43, ampm: 'PM' },
+  { h: 7, m: 59, ampm: 'PM' },
 ] as const;
 
 const CAMERA_POSES: Record<
@@ -290,20 +291,20 @@ function syncTimeline(
 function syncRailProgress(storyProgress: number): number {
   const [handoff, work, alarm, delivered] = CYCLE_TIME_MARKERS;
 
-  // Before handoff: rail at 0
-  if (storyProgress <= PHASES.handoff.in) {
+  // Before logIntro ends: rail at 0
+  if (storyProgress <= PHASES.logIntro.out) {
     return 0;
   }
 
-  // Handoff -> phone focus: 0 to handoff marker
-  if (storyProgress < PHASES.phone.introEnd) {
+  // LogIntro.out -> phone hold: 0 to handoff marker
+  if (storyProgress < PHASES.phone.holdEnd) {
     return lerp(
       0,
       handoff.position,
       ease(
         clamp(
-          (storyProgress - PHASES.handoff.in) /
-            Math.max(PHASES.phone.introEnd - PHASES.handoff.in, 0.001),
+          (storyProgress - PHASES.logIntro.out) /
+            Math.max(PHASES.phone.holdEnd - PHASES.logIntro.out, 0.001),
           0,
           1,
         ),
@@ -311,15 +312,15 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Phone focus -> clock focus: handoff to work marker
-  if (storyProgress < PHASES.clock.introEnd) {
+  // Phone hold -> phone outro: handoff to work marker
+  if (storyProgress < PHASES.phone.out) {
     return lerp(
       handoff.position,
       work.position,
       ease(
         clamp(
-          (storyProgress - PHASES.phone.introEnd) /
-            Math.max(PHASES.clock.introEnd - PHASES.phone.introEnd, 0.001),
+          (storyProgress - PHASES.phone.holdEnd) /
+            Math.max(PHASES.phone.out - PHASES.phone.holdEnd, 0.001),
           0,
           1,
         ),
@@ -327,15 +328,15 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Clock focus -> laptop focus: work to alarm marker
-  if (storyProgress < PHASES.laptop.introEnd) {
+  // Phone out -> clock holdEnd: work to alarm marker
+  if (storyProgress < PHASES.clock.holdEnd) {
     return lerp(
       work.position,
       alarm.position,
       ease(
         clamp(
-          (storyProgress - PHASES.clock.introEnd) /
-            Math.max(PHASES.laptop.introEnd - PHASES.clock.introEnd, 0.001),
+          (storyProgress - PHASES.phone.out) /
+            Math.max(PHASES.clock.holdEnd - PHASES.phone.out, 0.001),
           0,
           1,
         ),
@@ -343,15 +344,15 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Laptop focus -> work transition: alarm to delivered marker
-  if (storyProgress < PHASES.workTransition.in) {
+  // Clock holdEnd -> laptop holdEnd: alarm to delivered marker
+  if (storyProgress < PHASES.laptop.holdEnd) {
     return lerp(
       alarm.position,
       delivered.position,
       ease(
         clamp(
-          (storyProgress - PHASES.laptop.introEnd) /
-            Math.max(PHASES.workTransition.in - PHASES.laptop.introEnd, 0.001),
+          (storyProgress - PHASES.clock.holdEnd) /
+            Math.max(PHASES.laptop.holdEnd - PHASES.clock.holdEnd, 0.001),
           0,
           1,
         ),
@@ -359,44 +360,40 @@ function syncRailProgress(storyProgress: number): number {
     );
   }
 
-  // Work transition: delivered to 1.0
-  return lerp(
-    delivered.position,
-    1,
-    ease(
-      clamp(
-        (storyProgress - PHASES.workTransition.in) /
-          Math.max(PHASES.workTransition.out - PHASES.workTransition.in, 0.001),
-        0,
-        1,
+  // Laptop holdEnd -> outroStart: delivered to 1.0
+  if (storyProgress < PHASES.laptop.outroStart) {
+    return lerp(
+      delivered.position,
+      1.0,
+      ease(
+        clamp(
+          (storyProgress - PHASES.laptop.holdEnd) /
+            Math.max(PHASES.laptop.outroStart - PHASES.laptop.holdEnd, 0.001),
+          0,
+          1,
+        ),
       ),
-    ),
-  );
+    );
+  }
+
+  return 1.0;
 }
 
 function getRailPresence(storyProgress: number): number {
-  if (storyProgress <= PHASES.statement.out) {
-    return lerp(
-      0.6,
-      0.86,
-      ease(
-        clamp(
-          storyProgress / Math.max(PHASES.statement.out, 0.001),
-          0,
-          1,
-        ),
-      ),
-    );
+  // Rail invisible until logIntro finishes (after all headline copy)
+  if (storyProgress < PHASES.logIntro.out) {
+    return 0;
   }
 
-  if (storyProgress <= PHASES.handoff.out) {
+  // Ramp from 0 to 0.94 during phone intro
+  if (storyProgress < PHASES.phone.introEnd) {
     return lerp(
-      0.86,
+      0,
       0.94,
       ease(
         clamp(
-          (storyProgress - PHASES.statement.out) /
-            Math.max(PHASES.handoff.out - PHASES.statement.out, 0.001),
+          (storyProgress - PHASES.logIntro.out) /
+            Math.max(PHASES.phone.introEnd - PHASES.logIntro.out, 0.001),
           0,
           1,
         ),
@@ -404,17 +401,19 @@ function getRailPresence(storyProgress: number): number {
     );
   }
 
-  if (storyProgress < PHASES.workTransition.in) {
+  // Hold at 0.94 until laptop outro
+  if (storyProgress < PHASES.laptop.outroStart) {
     return 0.94;
   }
 
+  // Fade to 0 during laptop outro → workTransition
   return lerp(
     0.94,
-    0.82,
+    0,
     ease(
       clamp(
-        (storyProgress - PHASES.workTransition.in) /
-          Math.max(PHASES.workTransition.out - PHASES.workTransition.in, 0.001),
+        (storyProgress - PHASES.laptop.outroStart) /
+          Math.max(PHASES.workTransition.in - PHASES.laptop.outroStart, 0.001),
         0,
         1,
       ),
@@ -442,6 +441,13 @@ export function getCycleStoryState(
     interpolateTime(visitorTimeSequence, syncedTimeline),
   );
 
+  const coffeeFocus = focusForPhase(
+    storyProgress,
+    PHASES.coffee.in,
+    PHASES.coffee.introEnd,
+    PHASES.coffee.outroStart,
+    PHASES.coffee.out,
+  );
   const phoneFocus = focusForPhase(
     storyProgress,
     PHASES.phone.in,
@@ -711,14 +717,14 @@ export function getCycleStoryState(
     0,
     1,
   );
-  const clockFlipProgress = clamp((clockLocalProgress - 0.82) / 0.18, 0, 1);
+  const clockFlipProgress = clamp((clockLocalProgress - 0.60) / 0.40, 0, 1);
   const clockDisplayTimeLabel =
     clockFlipProgress > 0
-      ? '7:00 AM'
+      ? '8:00 PM'
       : formatTime(
           interpolateTime(
             CLOCK_OVERNIGHT_SEQUENCE,
-            clamp(clockLocalProgress / 0.82, 0, 1),
+            clamp(clockLocalProgress / 0.60, 0, 1),
           ),
         );
   const railPresence = getRailPresence(storyProgress);
@@ -761,11 +767,12 @@ export function getCycleStoryState(
     railOpacity: railPresence,
     railEmphasis: lerp(0.72, 1, railPresence),
     dawnAmount: worldBrightness,
+    coffeeFocus,
     phoneFocus,
     clockFocus,
     laptopFocus,
     workFocus,
-    sceneReveal: ease(clamp(storyProgress / Math.max(PHASES.logIntro.in, 0.001), 0, 1)),
+    sceneReveal: ease(clamp((storyProgress - PHASES.logIntro.in) / Math.max(PHASES.phone.in - PHASES.logIntro.in, 0.001), 0, 1)),
     sceneVerticalShift: 1 - ease(clamp(
       (storyProgress - PHASES.logIntro.in) /
         Math.max(PHASES.phone.in - PHASES.logIntro.in, 0.001),

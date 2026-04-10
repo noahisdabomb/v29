@@ -1,6 +1,7 @@
 import { SCALE, SCALE_ITEMS, CAL_COM_URL } from '@/lib/content';
 import { ScrollReveal, StaggerReveal } from '@/components/ui/ScrollReveal';
 import ScrambleLabel from '@/components/ui/ScrambleLabel';
+import Button from '@/components/ui/Button';
 
 export default function ScaleSection() {
   return (
@@ -51,14 +52,9 @@ export default function ScaleSection() {
         </div>
 
         <div className="mt-12 flex justify-center md:justify-start">
-          <a
-            href={CAL_COM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 font-heading text-base font-semibold text-text-primary transition-all duration-300 hover:shadow-[0_0_30px_rgba(224,68,88,0.25)] hover:scale-[1.02] active:scale-[0.98] active:duration-100"
-          >
+          <Button as="a" href={CAL_COM_URL} target="_blank" rel="noopener noreferrer" size="lg">
             Book a Strategy Call
-          </a>
+          </Button>
         </div>
       </div>
     </section>

@@ -35,7 +35,10 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
       return rect.top < vh * 0.5 && rect.bottom > vh * 0.5;
     }
 
+    // Snap disabled — preserved for easy re-enable by uncommenting
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function attemptSnap() {
+      /* SNAP DISABLED
       if (isSnapping || !lenisRef.current) return;
 
       // Don't snap inside the CycleSection scroll-driven area
@@ -77,6 +80,7 @@ export default function LenisProvider({ children }: { children: React.ReactNode 
           isSnapping = false;
         }, 450);
       }
+      END SNAP DISABLED */
     }
 
     function clearSnap() {

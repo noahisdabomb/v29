@@ -104,7 +104,6 @@ export default function Nav() {
         <TransitionLink href="/" className="no-underline" aria-label="Noah Williams, home">
           <LogoIcon size={28} />
         </TransitionLink>
-
       </nav>
 
       {/* Dot grid trigger — fixed independently so it's always clickable above the panel */}

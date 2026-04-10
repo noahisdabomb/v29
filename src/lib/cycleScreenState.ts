@@ -21,6 +21,7 @@ export interface PhoneSequenceState {
   activeIndex: number;
   activePulse: number;
   lineProgress: number;
+  loadingProgress: number;
 }
 
 export interface ClockSequenceState {
@@ -29,6 +30,7 @@ export interface ClockSequenceState {
   flashAmount: number;
   faceIn: number;
   hold0659: number;
+  flipHourTens: number;
   flipMinuteOnes: number;
   flipMinuteTens: number;
   flipHourOnes: number;
@@ -48,6 +50,7 @@ export interface LaptopSequenceState {
   rowScales: number[];
   activeIndex: number;
   redFlood: number;
+  composeProgress: number;
 }
 
 function reveal(progress: number, start: number, duration: number): number {
@@ -84,6 +87,7 @@ export function getPhoneSequenceState(
       activeIndex: itemCount - 1,
       activePulse: 0,
       lineProgress: 1,
+      loadingProgress: 0,
     };
   }
 
@@ -100,6 +104,10 @@ export function getPhoneSequenceState(
   const revealEnd = CYCLE_MOTION.phone.contentRevealEnd;
   const revealRange = revealEnd - revealStart;
   const headerRuleProgress = clamp((progress - revealStart) / revealRange, 0, 1);
+
+  // Loading shimmer appears after header, before content entries
+  const loadingProgress = reveal(progress, 0.12, 0.12) * (1 - reveal(progress, revealStart, 0.06));
+
   const headerGlow =
     reveal(progress, 0.1, 0.16) *
     (1 - reveal(progress, CYCLE_MOTION.phone.exitStart, 0.1));
@@ -166,6 +174,7 @@ export function getPhoneSequenceState(
     activeIndex,
     activePulse,
     lineProgress: clamp((progress - 0.1) / 0.44, 0, 1),
+    loadingProgress,
   };
 }
 
@@ -176,6 +185,11 @@ export function getClockSequenceState(
   const displayProgress = reveal(progress, 0.02, reducedMotion ? 0.08 : 0.12);
   const faceIn = displayProgress;
   const hold0659 = reveal(progress, 0.14, reducedMotion ? 0.07 : 0.1);
+  const flipHourTens = reveal(
+    progress,
+    reducedMotion ? 0.42 : 0.46,
+    reducedMotion ? 0.06 : 0.08,
+  );
   const flipMinuteOnes = reveal(
     progress,
     reducedMotion ? 0.5 : 0.54,
@@ -211,6 +225,7 @@ export function getClockSequenceState(
     flashAmount,
     faceIn,
     hold0659,
+    flipHourTens,
     flipMinuteOnes,
     flipMinuteTens,
     flipHourOnes,
@@ -237,6 +252,7 @@ export function getLaptopSequenceState(
       rowScales: Array.from({ length: rowCount }, () => 1),
       activeIndex: rowCount - 1,
       redFlood: 0,
+      composeProgress: 0,
     };
   }
 
@@ -251,9 +267,11 @@ export function getLaptopSequenceState(
     0,
     1,
   );
-  const campaignReadyOpacity =
-    reveal(progress, 0.24, 0.12) * (1 - reveal(progress, 0.34, 0.08));
+  const campaignReadyOpacity = 0;
   const pushIntoProgress = reveal(progress, 0.44, 0.24);
+
+  // Compose typing animation — plays during screenPush window (0.32-0.60)
+  const composeProgress = clamp((progress - 0.18) / 0.38, 0, 1);
 
   let greenOverlayOpacity = 0;
   if (progress >= 0.82) {
@@ -267,7 +285,7 @@ export function getLaptopSequenceState(
   let activeIndex = -1;
 
   for (let index = 0; index < rowCount; index += 1) {
-    const rowStart = 0.72 + index * 0.06;
+    const rowStart = 0.72 + index * 0.04;
     const opacity = inboxOpacity * reveal(progress, rowStart, 0.08);
     emailOpacities.push(opacity);
     emailOffsets.push((1 - opacity) * 22);
@@ -297,5 +315,6 @@ export function getLaptopSequenceState(
     rowScales,
     activeIndex,
     redFlood,
+    composeProgress,
   };
 }

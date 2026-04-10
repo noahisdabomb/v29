@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import gsap from 'gsap';
+import { PAGE_TRANSITION } from '@/lib/constants';
 
 interface TransitionContextValue {
   /** Whether a page transition is currently playing */
@@ -37,34 +39,29 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
     return new Promise<void>((resolve) => {
       resolveRef.current = resolve;
 
-      // Import GSAP dynamically to keep this module light
-      import('gsap').then(({ default: gsap }) => {
-        import('@/lib/constants').then(({ PAGE_TRANSITION }) => {
-          const el = contentRef.current;
-          if (!el) {
-            resolve();
-            return;
-          }
+      const el = contentRef.current;
+      if (!el) {
+        resolve();
+        return;
+      }
 
-          const prefersReducedMotion = window.matchMedia(
-            '(prefers-reduced-motion: reduce)',
-          ).matches;
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+      ).matches;
 
-          if (prefersReducedMotion) {
-            resolve();
-            return;
-          }
+      if (prefersReducedMotion) {
+        resolve();
+        return;
+      }
 
-          gsap.to(el, {
-            opacity: 0,
-            y: -30,
-            duration: PAGE_TRANSITION.exitDuration,
-            ease: PAGE_TRANSITION.exitEase,
-            onComplete: () => {
-              resolve();
-            },
-          });
-        });
+      gsap.to(el, {
+        opacity: 0,
+        y: -30,
+        duration: PAGE_TRANSITION.exitDuration,
+        ease: PAGE_TRANSITION.exitEase,
+        onComplete: () => {
+          resolve();
+        },
       });
     });
   }

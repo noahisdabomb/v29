@@ -83,11 +83,12 @@ function WorldRig({
           displayProgress: 1,
           faceIn: 1,
           hold0659: 1,
+          flipHourTens: 0,
           flipMinuteOnes: 0,
           flipMinuteTens: 0,
           flipHourOnes: 0,
           settle0700: 0,
-          ringAmount: storyState.clockFocus * 0.08,
+          ringAmount: 0,
           flashAmount: storyState.alarmPulse * 0.28,
         };
       }
@@ -98,10 +99,11 @@ function WorldRig({
         displayProgress: 1,
         faceIn: 1,
         hold0659: 1,
-        flipMinuteOnes: Math.min(flip / 0.42, 1),
-        flipMinuteTens: flip <= 0.28 ? 0 : Math.min((flip - 0.28) / 0.34, 1),
-        flipHourOnes: flip <= 0.54 ? 0 : Math.min((flip - 0.54) / 0.38, 1),
-        settle0700: flip <= 0.88 ? 0 : Math.min((flip - 0.88) / 0.12, 1),
+        flipHourTens: flip <= 0.05 ? 0 : Math.min((flip - 0.05) / 0.35, 1),
+        flipMinuteOnes: Math.min(flip / 0.45, 1),
+        flipMinuteTens: flip <= 0.15 ? 0 : Math.min((flip - 0.15) / 0.35, 1),
+        flipHourOnes: flip <= 0.35 ? 0 : Math.min((flip - 0.35) / 0.45, 1),
+        settle0700: flip <= 0.82 ? 0 : Math.min((flip - 0.82) / 0.18, 1),
         ringAmount: 0.06 + storyState.alarmPulse * 0.42,
         flashAmount: 0.04 + storyState.alarmPulse * 0.72,
       };
@@ -162,17 +164,18 @@ function WorldRig({
     if (clockGroupRef.current) {
       const focus = storyState.clockFocus;
       const phoneHold = storyState.phoneHoldProgress;
+      const clockRetreat = storyState.clockToLaptopProgress;
       clockGroupRef.current.position.set(
-        0.05 + phoneHold * 0.05,
-        -0.02 + focus * 0.048 + phoneHold * 0.002,
-        -0.3 - phoneHold * 0.08,
+        0.05 + phoneHold * 0.05 - clockRetreat * 0.24,
+        -0.02 + focus * 0.048 + phoneHold * 0.002 - clockRetreat * 0.06,
+        -0.3 - phoneHold * 0.08 - clockRetreat * 0.30,
       );
       clockGroupRef.current.rotation.set(
         -0.03 + focus * 0.016,
         0.02 + phoneHold * 0.02,
         0,
       );
-      const clockScale = 0.49 + focus * 0.018 - phoneHold * 0.006;
+      const clockScale = (0.49 + focus * 0.018 - phoneHold * 0.006) * (1 - clockRetreat * 0.15);
       clockGroupRef.current.scale.setScalar(clockScale);
       clockGroupRef.current.visible = true;
     }

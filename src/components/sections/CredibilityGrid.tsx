@@ -11,6 +11,7 @@ import {
   type CredibilityBrand,
 } from '@/lib/content';
 import StatCounter from '@/components/ui/StatCounter';
+import { MOTION } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,9 +85,9 @@ function StatBlock({ value, label }: { value: string; label: string }) {
     <div className="cred-stat flex flex-col items-center text-center">
       <StatCounter
         value={value}
-        className="font-heading text-2xl font-bold text-white/50 md:text-3xl"
+        className="font-heading text-2xl font-bold text-white/70 md:text-3xl"
       />
-      <span className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-white/35">
+      <span className="mt-1 font-mono text-[11px] uppercase tracking-[0.15em] text-white/60">
         {label}
       </span>
     </div>
@@ -125,7 +126,7 @@ export default function CredibilityGrid() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: el,
-          start: 'top 85%',
+          start: 'top 100%',
           toggleActions: 'play none none reverse',
         },
       });
@@ -134,14 +135,14 @@ export default function CredibilityGrid() {
       tl.fromTo(
         '.cred-header',
         { opacity: 0, x: -40 },
-        { opacity: 1, x: 0, duration: 0.7, ease: 'power3.out' },
+        { opacity: 1, x: 0, duration: 0.7, ease: MOTION.ease.standard },
       );
 
       // 2. Rule line grows from left
       tl.fromTo(
         '.cred-rule',
         { scaleX: 0, transformOrigin: 'left center' },
-        { scaleX: 1, duration: 0.8, ease: 'power3.out' },
+        { scaleX: 1, duration: 0.8, ease: MOTION.ease.standard },
         '-=0.4',
       );
 
@@ -152,8 +153,8 @@ export default function CredibilityGrid() {
         {
           opacity: 0.5,
           y: 0,
-          duration: 0.6,
-          ease: 'power3.out',
+          duration: MOTION.duration.entrance,
+          ease: MOTION.ease.standard,
           stagger: 0.06,
           clearProps: 'transform',
         },
@@ -164,7 +165,7 @@ export default function CredibilityGrid() {
       tl.fromTo(
         '.cred-stat-border',
         { opacity: 0 },
-        { opacity: 1, duration: 0.4, ease: 'power3.out' },
+        { opacity: 1, duration: 0.4, ease: MOTION.ease.standard },
         '-=0.25',
       );
 
@@ -175,8 +176,8 @@ export default function CredibilityGrid() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.6,
-          ease: 'power3.out',
+          duration: MOTION.duration.entrance,
+          ease: MOTION.ease.standard,
           stagger: 0.1,
           clearProps: 'transform',
         },
@@ -190,8 +191,8 @@ export default function CredibilityGrid() {
         {
           opacity: 1,
           x: 0,
-          duration: 0.6,
-          ease: 'power3.out',
+          duration: MOTION.duration.entrance,
+          ease: MOTION.ease.standard,
           stagger: 0.1,
         },
         '-=0.25',
@@ -204,8 +205,8 @@ export default function CredibilityGrid() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.5,
-          ease: 'power3.out',
+          duration: MOTION.duration.slow,
+          ease: MOTION.ease.standard,
           stagger: 0.06,
           clearProps: 'transform',
         },
@@ -218,8 +219,8 @@ export default function CredibilityGrid() {
         {
           opacity: 0.5,
           y: 0,
-          duration: 0.5,
-          ease: 'power3.out',
+          duration: MOTION.duration.slow,
+          ease: MOTION.ease.standard,
           stagger: 0.06,
           clearProps: 'transform',
         },
@@ -289,7 +290,7 @@ export default function CredibilityGrid() {
                   <span className="font-heading text-sm font-medium text-white">
                     {award.name}
                   </span>
-                  <span className="font-mono text-[10px] uppercase tracking-wider text-white/50">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-white/70">
                     {award.detail}
                   </span>
                 </span>

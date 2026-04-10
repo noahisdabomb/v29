@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Work | Noah Williams',
     description:
-      'Proof-first case studies for teams who need the work to sell before the meeting is over.',
+      'Proof-first case studies for teams who need the work to speak before the meeting ends.',
   },
 };
 
@@ -35,7 +35,7 @@ export default function WorkPage() {
             Work
           </span>
           <h1 className="mt-5 max-w-4xl font-heading text-[clamp(2.75rem,6vw,5.5rem)] font-bold leading-[0.98] text-text-primary">
-            Proof-first case studies for teams who need the work to sell before the meeting is over.
+            Proof-first case studies for teams who need the work to speak before the meeting ends.
           </h1>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-text-secondary">
             Each case study is built to show the strategic turn, the execution

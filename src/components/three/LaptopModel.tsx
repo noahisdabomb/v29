@@ -270,7 +270,7 @@ export default function LaptopModel({
     hingeGlowRef.current = hingeGlow;
     group.add(hingeGlow);
 
-    const screenGlow = new THREE.PointLight(0xffb8c0, 0, 9.6, 1.85);
+    const screenGlow = new THREE.PointLight(0xff6070, 0, 9.6, 1.85);
     screenGlow.position.set(0, minY + sizeY * 0.16, minZ + sizeZ * 0.05);
     screenGlowRef.current = screenGlow;
     group.add(screenGlow);

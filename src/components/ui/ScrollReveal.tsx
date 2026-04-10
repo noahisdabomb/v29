@@ -3,6 +3,7 @@
 import { useRef, useEffect, type ReactNode } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { MOTION } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -99,7 +100,7 @@ export function ScrollReveal({
       ...toVars,
       duration,
       delay,
-      ease: 'power3.out',
+      ease: MOTION.ease.standard,
       scrollTrigger: {
         trigger: el,
         start,
@@ -165,7 +166,7 @@ export function StaggerReveal({
         opacity: 1,
         duration,
         stagger,
-        ease: 'power3.out',
+        ease: MOTION.ease.standard,
         scrollTrigger: {
           trigger: container,
           start,

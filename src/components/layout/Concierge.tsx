@@ -21,14 +21,14 @@ const ClippyScene = dynamic(() => import('@/components/three/ClippyModel'), {
 });
 
 const IDLE_MESSAGES = [
-  `Evaluating creative directors? I can speed this up.`,
   `I know every case study, metric, and process detail on this site.`,
   `15 years of campaigns. Ask me about any of them.`,
-  `Strategy to final files. One person. That's the model.`,
   `Coca-Cola, Orangetheory, Delta. I can walk you through the work.`,
-  `Not a chatbot. A shortcut to whatever you need next.`,
-  `Your evening brief. His morning priority. That's how the timezone works.`,
+  `Your evening brief. His morning priority. That's how it works.`,
   `I outlived Internet Explorer. I have perspective.`,
+  `Need the quick version? I've got you.`,
+  `Ask me anything — I know where everything is.`,
+  `Not sure where to start? That's literally why I'm here.`,
 ];
 
 const PAGE_MESSAGES: Record<string, string[]> = {
@@ -1208,7 +1208,9 @@ export default function Concierge() {
       ref={asideRef}
       className={`fixed left-2 z-40 sm:left-3 transition-[visibility,opacity] duration-500 ${loaderDone ? 'visible opacity-100' : 'invisible opacity-0'}`}
       style={{ bottom: `${Math.max(8, footerOffset + 8)}px` }}
-      aria-label="Clippy assistant"
+      {...(isExpanded
+        ? { role: 'dialog' as const, 'aria-modal': true, 'aria-label': 'AI Concierge' }
+        : { 'aria-hidden': true, 'aria-label': 'Clippy assistant' })}
     >
       {/* Change 8: Card open/close — asymmetric spring for open, quick ease-out for close */}
       <div
@@ -1220,9 +1222,6 @@ export default function Concierge() {
       >
         {/* Change 1: Card background/border to site tokens */}
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Clippy chat"
           className={`${
             isIntroState || activeTab === 'contact'
               ? 'h-[min(34rem,calc(100vh-0.8rem))] sm:h-[min(34rem,calc(100vh-1rem))] lg:h-[min(34rem,calc(100vh-1.5rem))]'

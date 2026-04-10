@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import { WORK_HEADER, CASE_STUDIES, toWorkPanels } from '@/lib/content';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import ScrambleLabel from '@/components/ui/ScrambleLabel';
+import TransitionLink from '@/components/layout/TransitionLink';
 import WorkPanel from './WorkPanel';
 
 interface WorkSectionProps {
@@ -46,7 +46,7 @@ export default function WorkSection({ featured }: WorkSectionProps) {
 
       {featured && (
         <div className="flex justify-center py-24">
-          <Link
+          <TransitionLink
             href="/work"
             className="group inline-flex items-center gap-3 rounded-full border border-border-subtle px-8 py-4 font-mono text-sm uppercase tracking-[0.15em] text-text-primary transition-all hover:border-accent hover:text-accent"
           >
@@ -54,7 +54,7 @@ export default function WorkSection({ featured }: WorkSectionProps) {
             <span className="inline-block transition-transform group-hover:translate-x-1">
               &rarr;
             </span>
-          </Link>
+          </TransitionLink>
         </div>
       )}
     </section>

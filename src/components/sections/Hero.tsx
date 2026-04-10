@@ -8,7 +8,9 @@ import { useLiveClock } from '@/hooks/useLiveClock';
 import { useGPUCapability } from '@/hooks/useGPUCapability';
 import { useProximityHeat } from '@/hooks/useProximityHeat';
 import { CAL_COM_URL } from '@/lib/content';
+import { MOTION } from '@/lib/motion';
 import MagneticButton from '@/components/ui/MagneticButton';
+import StatusDot from '@/components/ui/StatusDot';
 import TransitionLink from '@/components/layout/TransitionLink';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -22,46 +24,15 @@ const HeroClockScene = dynamic(
 );
 
 // ---------------------------------------------------------------------------
-// Typography wall lines — "IT'S TOMORROW HERE. YOUR WORK IS ALREADY STARTED."
+// Typography wall lines — "IT'S TOMORROW HERE. YOUR WORK HAS ALREADY STARTED."
 // ---------------------------------------------------------------------------
 const WALL_LINES = [
   ["IT'S"],
   ['TOMORROW', 'HERE.'],
   ['YOUR', 'WORK'],
-  ['IS', 'ALREADY'],
+  ['HAS', 'ALREADY'],
   ['STARTED.'],
 ];
-
-// ---------------------------------------------------------------------------
-// StatusDot
-// ---------------------------------------------------------------------------
-function StatusDot({ status }: { status: 'available' | 'winding-down' | 'offline' }) {
-  const dotColor =
-    status === 'available'
-      ? 'bg-emerald-400'
-      : status === 'winding-down'
-        ? 'bg-amber-400'
-        : 'bg-red-400';
-
-  const pingColor =
-    status === 'available'
-      ? 'bg-emerald-400'
-      : status === 'winding-down'
-        ? 'bg-amber-400'
-        : '';
-
-  return (
-    <span className="relative flex size-2">
-      {status !== 'offline' && pingColor && (
-        <span
-          className={`absolute inline-flex size-full rounded-full ${pingColor} opacity-75`}
-          style={{ animation: 'ping-limited 1.8s ease-in-out 3' }}
-        />
-      )}
-      <span className={`relative inline-flex size-2 rounded-full ${dotColor}`} />
-    </span>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Hero Component
@@ -127,9 +98,9 @@ export default function Hero() {
       {
         opacity: 1,
         y: 0,
-        duration: 0.5,
+        duration: MOTION.duration.slow,
         stagger: 0.06,
-        ease: 'power4.out',
+        ease: MOTION.ease.emphatic,
       },
     );
 
@@ -138,7 +109,7 @@ export default function Hero() {
       opacity: 1,
       y: 0,
       duration: 0.4,
-      ease: 'power3.out',
+      ease: MOTION.ease.standard,
     }, '-=0.15');
 
     // 3D clock rises in
@@ -147,8 +118,8 @@ export default function Hero() {
       {
         opacity: 1,
         y: 0,
-        duration: 0.6,
-        ease: 'power4.out',
+        duration: MOTION.duration.entrance,
+        ease: MOTION.ease.emphatic,
       },
       '-=0.25',
     );
@@ -160,7 +131,7 @@ export default function Hero() {
         opacity: 1,
         y: 0,
         duration: 0.45,
-        ease: 'power3.out',
+        ease: MOTION.ease.standard,
       },
       '-=0.2',
     );
@@ -212,16 +183,9 @@ export default function Hero() {
           filter: 'blur(80px)',
         }}
       />
-      {/* Dual-gradient warm vignette */}
-      <div
-        className="pointer-events-none absolute inset-0 z-[1]"
-        style={{
-          background: `linear-gradient(180deg, rgba(22,9,16,0.7) 0%, transparent 22%, transparent 75%, rgba(22,9,16,0.65) 100%), radial-gradient(ellipse 75% 70% at 50% 50%, transparent 45%, rgba(22,9,16,0.4) 100%)`,
-        }}
-      />
       {/* Film noise */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        className="pointer-events-none absolute inset-0 opacity-[0.015]"
         style={{
           backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
           backgroundSize: '128px 128px',
@@ -304,8 +268,11 @@ export default function Hero() {
               <MagneticButton>
                 <TransitionLink
                   href="/work"
-                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(245,240,230,0.12)] bg-transparent px-7 py-3.5 font-heading text-sm font-semibold transition-all duration-300 hover:border-[rgba(245,240,230,0.25)] hover:bg-[rgba(245,240,230,0.04)]"
-                  style={{ color: 'var(--hero-cream)' }}
+                  className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-heading text-sm font-semibold transition-all duration-300 hover:shadow-[0_0_30px_rgba(224,68,88,0.25)] hover:scale-[1.02] active:scale-[0.98] active:duration-100"
+                  style={{
+                    background: 'var(--hero-magenta)',
+                    color: 'var(--hero-cream)',
+                  }}
                 >
                   See the Work
                 </TransitionLink>
@@ -315,11 +282,8 @@ export default function Hero() {
                   href={CAL_COM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-heading text-sm font-semibold transition-all duration-300 hover:shadow-[0_0_30px_rgba(224,68,88,0.25)] hover:scale-[1.02] active:scale-[0.98] active:duration-100"
-                  style={{
-                    background: 'var(--hero-magenta)',
-                    color: 'var(--hero-cream)',
-                  }}
+                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(245,240,230,0.12)] bg-transparent px-7 py-3.5 font-heading text-sm font-semibold transition-all duration-300 hover:border-[rgba(245,240,230,0.25)] hover:bg-[rgba(245,240,230,0.04)]"
+                  style={{ color: 'var(--hero-cream)' }}
                 >
                   Book a Strategy Call
                 </a>

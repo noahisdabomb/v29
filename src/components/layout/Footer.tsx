@@ -5,8 +5,11 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import TransitionLink from '@/components/layout/TransitionLink';
 import { useLiveClock } from '@/hooks/useLiveClock';
+import { getLenis } from '@/hooks/useLenis';
 import LogoIcon from '@/components/ui/LogoIcon';
 import MagneticButton from '@/components/ui/MagneticButton';
+import StatusDot from '@/components/ui/StatusDot';
+import { MOTION } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 import {
@@ -14,28 +17,6 @@ import {
   FOOTER,
   SITE_SETTINGS,
 } from '@/lib/content';
-
-/* ── Status dot ──────────────────────────────────────────── */
-function StatusDot({ status }: { status: 'available' | 'winding-down' | 'offline' }) {
-  const color =
-    status === 'available'
-      ? 'bg-emerald-400'
-      : status === 'winding-down'
-        ? 'bg-amber-400'
-        : 'bg-red-200';
-  const pulse =
-    status === 'available'
-      ? 'animate-pulse'
-      : '';
-  return (
-    <span className="relative inline-flex size-2">
-      {status === 'available' && (
-        <span className={`absolute inline-flex size-full rounded-full ${color} opacity-40 ${pulse}`} />
-      )}
-      <span className={`relative inline-flex size-2 rounded-full ${color}`} />
-    </span>
-  );
-}
 
 /* ── Arrow icon ──────────────────────────────────────────── */
 function ArrowUpRight({ className }: { className?: string }) {
@@ -81,14 +62,14 @@ export default function Footer() {
       tl.fromTo(
         '.ftr-tagline',
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
+        { opacity: 1, y: 0, duration: 0.7, ease: MOTION.ease.standard },
       );
 
       // Rule grows from left
       tl.fromTo(
         '.ftr-rule',
         { scaleX: 0, transformOrigin: 'left center' },
-        { scaleX: 1, duration: 0.8, ease: 'power3.out' },
+        { scaleX: 1, duration: 0.8, ease: MOTION.ease.standard },
         '-=0.3',
       );
 
@@ -96,7 +77,7 @@ export default function Footer() {
       tl.fromTo(
         '.ftr-col',
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out', clearProps: 'transform' },
+        { opacity: 1, y: 0, duration: MOTION.duration.entrance, stagger: 0.1, ease: MOTION.ease.standard, clearProps: 'transform' },
         '-=0.4',
       );
 
@@ -104,7 +85,7 @@ export default function Footer() {
       tl.fromTo(
         '.ftr-bottom',
         { opacity: 0 },
-        { opacity: 1, duration: 0.5, ease: 'power3.out' },
+        { opacity: 1, duration: MOTION.duration.slow, ease: MOTION.ease.standard },
         '-=0.2',
       );
     }, el);
@@ -226,7 +207,7 @@ export default function Footer() {
 
             {/* Status + timezone */}
             <div className="mt-5 flex items-center gap-2.5 rounded-md border border-white/15 bg-white/5 px-3 py-2">
-              <StatusDot status={clock.status} />
+              <StatusDot status={clock.status} pulseMode="continuous" />
               <span className="font-mono text-[11px] tabular-nums text-white/80">
                 {clock.bkkTime || '--:--'}
               </span>
@@ -247,7 +228,11 @@ export default function Footer() {
           </div>
           <MagneticButton>
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => {
+                const lenis = getLenis();
+                if (lenis) lenis.scrollTo(0);
+                else window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               aria-label="Scroll to top"
               className="group flex size-9 items-center justify-center rounded border border-white/30 text-white/50 transition-all hover:border-white/60 hover:text-white active:scale-95 active:duration-100"
             >

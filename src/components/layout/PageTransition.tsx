@@ -50,7 +50,7 @@ export default function PageTransition({ children }: { children: ReactNode }) {
       y: 0,
       duration: PAGE_TRANSITION.enterDuration,
       ease: PAGE_TRANSITION.enterEase,
-      delay: 0.05, // tiny delay so DOM settles
+      delay: 0,
       onComplete: () => {
         markComplete();
 

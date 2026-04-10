@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback, type CSSProperties, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 import CycleTimeRail from '@/components/sections/CycleTimeRail';
 import { useScrollPhase } from '@/hooks/useScrollPhase';
@@ -13,6 +13,7 @@ import { ease, clamp } from '@/lib/easing';
 import {
   BKK_TIME_SEQUENCE,
   CYCLE_MOTION,
+  PHASE_ORDER,
   PHASES,
   PHONE_3D_APPROVED,
   SCROLL_TRIGGER_DEFAULTS,
@@ -99,8 +100,69 @@ function PhaseLayer({
   );
 }
 
+/* ── Screen-reader phase labels for aria-live announcements ─── */
+const PHASE_LABELS: Record<PhaseName, string> = {
+  statement: 'The Cycle — Your team\'s asleep. The deadline isn\'t.',
+  handoff: 'Overnight Handoff — End of your day. Beginning of mine.',
+  coffee: 'Your brief is my morning coffee.',
+  logIntro: 'While you slept, the work kept moving.',
+  phone: 'Phone notifications arriving through the night.',
+  clock: 'Vintage flip clock counting overnight hours.',
+  laptop: 'Morning delivery — Campaign ready, files lined up.',
+  workTransition: 'Selected Work — The work that got me here.',
+};
+
+function ActivePhaseAnnouncer() {
+  const prevPhaseRef = useRef<PhaseName | null>(null);
+  const [announcement, setAnnouncement] = useState('');
+
+  const selectActivePhase = useCallback(
+    (state: ReturnType<typeof useScrollStore.getState>) => {
+      let best: PhaseName = PHASE_ORDER[0];
+      let bestOpacity = 0;
+      for (const phase of PHASE_ORDER) {
+        const t = state[`${phase}Transform` as `${PhaseName}Transform`] as PhaseTransform;
+        if (t.opacity > bestOpacity) {
+          bestOpacity = t.opacity;
+          best = phase;
+        }
+      }
+      return bestOpacity > 0.3 ? best : null;
+    },
+    [],
+  );
+
+  const activePhase = useScrollStore(selectActivePhase);
+
+  useEffect(() => {
+    if (activePhase && activePhase !== prevPhaseRef.current) {
+      prevPhaseRef.current = activePhase;
+      setAnnouncement(PHASE_LABELS[activePhase]);
+    }
+  }, [activePhase]);
+
+  return (
+    <div className="sr-only" aria-live="polite" aria-atomic="true">
+      {announcement}
+    </div>
+  );
+}
+
 const STAGGER_HIDDEN: CSSProperties = Object.freeze({ opacity: 0, transform: 'translateY(18px)' });
 const STAGGER_VISIBLE: CSSProperties = Object.freeze({});
+
+const CINEMATIC_HIDDEN: CSSProperties = Object.freeze({
+  opacity: 0,
+  transform: 'translateY(18px)',
+  filter: 'blur(8px)',
+});
+
+const WORD_HIDDEN: CSSProperties = Object.freeze({
+  opacity: 0,
+  transform: 'translateY(12px)',
+  filter: 'blur(8px)',
+});
+const WORD_VISIBLE: CSSProperties = Object.freeze({});
 
 function staggerStyle(
   progress: number,
@@ -118,6 +180,148 @@ function staggerStyle(
     transform: `translate3d(0, ${(1 - t) * 18}px, 0)`,
     willChange: 'opacity, transform',
   };
+}
+
+function cinematicStaggerStyle(
+  progress: number,
+  delay: number,
+  speed: number,
+  reducedMotion: boolean,
+): CSSProperties {
+  if (reducedMotion) return STAGGER_VISIBLE;
+  const t = ease(clamp((progress - delay) * speed, 0, 1));
+  if (t <= 0) return CINEMATIC_HIDDEN;
+  if (t >= 1) return STAGGER_VISIBLE;
+  const blurPx = (1 - t) * 8;
+  return {
+    opacity: t,
+    transform: `translate3d(0, ${(1 - t) * 18}px, 0)`,
+    filter: `blur(${blurPx}px)`,
+    willChange: 'opacity, transform, filter',
+  };
+}
+
+function headlineEnvelopeStyle(
+  progress: number,
+  delay: number,
+  speed: number,
+  reducedMotion: boolean,
+): CSSProperties {
+  if (reducedMotion) return STAGGER_VISIBLE;
+  const t = ease(clamp((progress - delay) * speed, 0, 1));
+  if (t <= 0) return STAGGER_HIDDEN;
+  if (t >= 1) return STAGGER_VISIBLE;
+  return {
+    opacity: t,
+    transform: `translate3d(0, ${(1 - t) * 10}px, 0)`,
+    willChange: 'opacity, transform',
+  };
+}
+
+function springScale(t: number): number {
+  if (t <= 0) return 0.3;
+  if (t >= 1) return 1.0;
+  const base = 0.3 + 0.7 * t;
+  const overshoot = 2.5 * Math.exp(-6 * t) * Math.sin(2 * Math.PI * t * 1.2);
+  return base + overshoot * 0.12;
+}
+
+function CinematicText({
+  text,
+  progress,
+  baseDelay = 0.06,
+  wordGap = 0.04,
+  speed = 5.0,
+  reducedMotion,
+  className = '',
+}: {
+  text: string;
+  progress: number;
+  baseDelay?: number;
+  wordGap?: number;
+  speed?: number;
+  reducedMotion: boolean;
+  className?: string;
+}) {
+  const words = useMemo(() => text.split(/\s+/), [text]);
+
+  if (reducedMotion) {
+    return <span className={className}>{text}</span>;
+  }
+
+  return (
+    <span className={className} aria-label={text}>
+      {words.map((word, i) => {
+        const wordDelay = baseDelay + i * wordGap;
+        const t = ease(clamp((progress - wordDelay) * speed, 0, 1));
+        const blurPx = (1 - t) * 8;
+
+        return (
+          <span
+            key={i}
+            aria-hidden="true"
+            style={
+              t <= 0
+                ? WORD_HIDDEN
+                : t >= 1
+                  ? WORD_VISIBLE
+                  : {
+                      opacity: t,
+                      transform: `translateY(${(1 - t) * 12}px)`,
+                      filter: `blur(${blurPx}px)`,
+                      willChange: 'opacity, transform, filter',
+                    }
+            }
+            className="inline-block"
+          >
+            {word}
+            {i < words.length - 1 ? '\u00A0' : ''}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function CinematicLetterbox({
+  cycleProgress,
+  reducedMotion,
+}: {
+  cycleProgress: number;
+  reducedMotion: boolean;
+}) {
+  if (reducedMotion) return null;
+
+  const presence = 1 - ease(clamp((cycleProgress - 0.28) / 0.10, 0, 1));
+  const fadeIn = ease(clamp(cycleProgress / 0.02, 0, 1));
+  const barOpacity = presence * fadeIn;
+
+  if (barOpacity <= 0.001) return null;
+
+  const barHeight = 10;
+
+  return (
+    <>
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 z-[5]"
+        style={{
+          height: `${barHeight}vh`,
+          background: '#000',
+          opacity: barOpacity,
+          transform: `translateY(${(1 - barOpacity) * -100}%)`,
+        }}
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[5]"
+        style={{
+          height: `${barHeight}vh`,
+          background: '#000',
+          opacity: barOpacity,
+          transform: `translateY(${(1 - barOpacity) * 100}%)`,
+        }}
+      />
+    </>
+  );
 }
 
 function CycleAtmosphere() {
@@ -200,23 +404,17 @@ function StatementContent({ reducedMotion }: { reducedMotion: boolean }) {
     <div className="relative flex h-full flex-col items-center justify-center px-6">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(224,68,88,0.08),rgba(224,68,88,0)_38%)]" />
       <span
-        className="relative mb-7 font-mono text-xs uppercase tracking-[0.24em] text-text-tertiary"
-        style={staggerStyle(progress, 0, 6, reducedMotion)}
+        className="relative mb-7 font-mono text-xs uppercase tracking-[0.24em] text-accent"
+        style={cinematicStaggerStyle(progress, 0, 6, reducedMotion)}
       >
         {CYCLE_STATEMENT.sectionLabel}
       </span>
       <h2
         className="relative max-w-4xl text-center font-heading text-[clamp(2.4rem,6vw,5.2rem)] font-bold italic leading-[0.96] text-text-primary text-balance"
-        style={staggerStyle(progress, 0.06, 4.4, reducedMotion)}
+        style={cinematicStaggerStyle(progress, 0.06, 4.4, reducedMotion)}
       >
         {CYCLE_STATEMENT.headline}
       </h2>
-      <p
-        className="relative mt-8 max-w-2xl text-center text-lg leading-relaxed text-text-secondary md:text-[1.25rem]"
-        style={staggerStyle(progress, 0.24, 3.2, reducedMotion)}
-      >
-        {CYCLE_STATEMENT.subline}
-      </p>
     </div>
   );
 }
@@ -232,30 +430,38 @@ function HandoffContent({
     <div className="flex h-full flex-col items-center justify-center px-6">
       <span
         className="mb-5 font-mono text-xs uppercase tracking-[0.24em] text-accent/72"
-        style={staggerStyle(progress, 0, 6, reducedMotion)}
+        style={cinematicStaggerStyle(progress, 0, 6, reducedMotion)}
       >
         {CYCLE_HANDOFF.sectionLabel}
       </span>
       <h3
         className="max-w-3xl text-center font-heading text-[clamp(2rem,5vw,4.1rem)] font-bold italic leading-[0.98] text-text-primary text-balance"
-        style={staggerStyle(progress, 0.05, 4.5, reducedMotion)}
+        style={cinematicStaggerStyle(progress, 0.05, 4.5, reducedMotion)}
       >
         {CYCLE_HANDOFF.headline}
       </h3>
-      <p
-        className="mt-4 max-w-2xl text-center text-lg text-text-secondary md:text-xl"
-        style={staggerStyle(progress, 0.16, 3.5, reducedMotion)}
+    </div>
+  );
+}
+
+function CoffeeContent({ reducedMotion }: { reducedMotion: boolean }) {
+  const progress = useScrollStore((state) => state.coffeeProgress);
+
+  return (
+    <div className="flex h-full items-center justify-center px-6">
+      <h3
+        className="max-w-4xl text-center font-heading text-[clamp(2.4rem,6vw,5rem)] font-bold italic leading-[0.94] text-text-primary"
+        style={headlineEnvelopeStyle(progress, 0.04, 3.0, reducedMotion)}
       >
-        {CYCLE_HANDOFF.subline}
-      </p>
-      <div
-        className="mt-10 rounded-full border border-white/10 bg-black/24 px-5 py-3 backdrop-blur-md"
-        style={staggerStyle(progress, 0.24, 3.8, reducedMotion)}
-      >
-        <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/58">
-          The rail now carries both clocks, the handoff, and the morning delivery.
-        </p>
-      </div>
+        <CinematicText
+          text="Your brief is my morning coffee."
+          progress={progress}
+          baseDelay={0.06}
+          wordGap={0.04}
+          speed={5.0}
+          reducedMotion={reducedMotion}
+        />
+      </h3>
     </div>
   );
 }
@@ -265,29 +471,40 @@ function LogIntroContent({ reducedMotion }: { reducedMotion: boolean }) {
 
   return (
     <div className="flex h-full flex-col items-center justify-center px-6">
-      <div className="rounded-full border border-accent/18 bg-accent/[0.08] px-4 py-2">
-        <span
-          className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent/82"
-          style={staggerStyle(progress, 0, 6, reducedMotion)}
-        >
-          {CYCLE_LOG_INTRO.sectionLabel}
-        </span>
-      </div>
+      {CYCLE_LOG_INTRO.sectionLabel && (
+        <div className="rounded-full border border-accent/18 bg-accent/[0.08] px-4 py-2">
+          <span
+            className="font-mono text-[11px] uppercase tracking-[0.22em] text-accent/82"
+            style={cinematicStaggerStyle(progress, 0, 6, reducedMotion)}
+          >
+            {CYCLE_LOG_INTRO.sectionLabel}
+          </span>
+        </div>
+      )}
       <h3
         className="mt-7 max-w-4xl text-center font-heading text-[clamp(2rem,5vw,4.2rem)] font-bold italic leading-[0.96] text-text-primary text-balance"
-        style={staggerStyle(progress, 0.08, 4.2, reducedMotion)}
+        style={headlineEnvelopeStyle(progress, 0.06, 4.0, reducedMotion)}
       >
-        {CYCLE_LOG_INTRO.headline}
+        <CinematicText
+          text={CYCLE_LOG_INTRO.headline}
+          progress={progress}
+          baseDelay={0.08}
+          wordGap={0.035}
+          speed={4.5}
+          reducedMotion={reducedMotion}
+        />
       </h3>
-      <p
-        className="mt-6 max-w-2xl text-center text-lg leading-relaxed text-text-secondary md:text-xl"
-        style={staggerStyle(progress, 0.2, 3.4, reducedMotion)}
-      >
-        {CYCLE_LOG_INTRO.subline}
-      </p>
+      {CYCLE_LOG_INTRO.subline && (
+        <p
+          className="mt-6 max-w-2xl text-center text-lg leading-relaxed text-text-secondary md:text-xl"
+          style={cinematicStaggerStyle(progress, 0.2, 3.4, reducedMotion)}
+        >
+          {CYCLE_LOG_INTRO.subline}
+        </p>
+      )}
       <div
         className="mt-10 h-px w-full max-w-xl bg-gradient-to-r from-transparent via-accent/40 to-transparent"
-        style={staggerStyle(progress, 0.28, 3.5, reducedMotion)}
+        style={cinematicStaggerStyle(progress, 0.28, 3.5, reducedMotion)}
       />
     </div>
   );
@@ -385,6 +602,10 @@ function LaptopViewportOverlay({
 
   if (overlayOpacity <= 0.001) return null;
 
+  const slamT = reducedMotion ? 1 : overlayOpacity;
+  const slamScale = reducedMotion ? 1 : springScale(slamT);
+  const slamBlur = reducedMotion ? 0 : (1 - slamT) * 12;
+
   return (
     <div
       className="pointer-events-none fixed inset-0 z-[9] flex items-center justify-center"
@@ -399,6 +620,9 @@ function LaptopViewportOverlay({
         style={{
           background: 'rgba(26,16,24,0.92)',
           backdropFilter: 'blur(24px)',
+          transform: reducedMotion ? 'none' : `scale(${slamScale})`,
+          filter: slamBlur > 0.01 ? `blur(${slamBlur}px)` : 'none',
+          willChange: slamT > 0 && slamT < 1 ? 'transform, filter' : 'auto',
         }}
       >
         {/* Title bar */}
@@ -469,7 +693,7 @@ function LaptopViewportOverlay({
                     opacity: emailT,
                     transform: reducedMotion
                       ? 'none'
-                      : `translateY(${(1 - emailT) * 16}px)`,
+                      : `translateX(${(1 - emailT) * 60}px)`,
                     background: isActive ? 'rgba(255,255,255,0.06)' : 'transparent',
                     borderLeft: isActive ? '2px solid #E04458' : '2px solid transparent',
                   }}
@@ -634,7 +858,7 @@ export default function CycleSection() {
     [cycleProgress, visitorTimeSequence, reducedMotion],
   );
   const shouldRender3D = canRender3D && PHONE_3D_APPROVED;
-  const sceneOpacity = reviewMode ? 1 : 0.2 + storyState.sceneReveal * 0.8;
+  const sceneOpacity = reviewMode ? 1 : storyState.sceneReveal;
 
   return (
     <section
@@ -656,7 +880,9 @@ export default function CycleSection() {
         style={{ backgroundColor: cycleBgColor }}
       >
         <CycleAtmosphere />
-        <div style={{ opacity: clamp(1 - ((cycleProgress ?? 0) - 0.58) / 0.04, 0, 1) }}>
+        <CinematicLetterbox cycleProgress={cycleProgress ?? 0} reducedMotion={reducedMotion} />
+        <ActivePhaseAnnouncer />
+        <div style={{ opacity: clamp(1 - ((cycleProgress ?? 0) - 0.86) / 0.08, 0, 1) }}>
           <CycleTimeRail storyState={storyState} visitorCity={safeVisitorCity} />
         </div>
         <CycleDebugPanel
@@ -704,6 +930,10 @@ export default function CycleSection() {
           <HandoffContent
             reducedMotion={reducedMotion}
           />
+        </PhaseLayer>
+
+        <PhaseLayer phase="coffee" reducedMotion={reducedMotion}>
+          <CoffeeContent reducedMotion={reducedMotion} />
         </PhaseLayer>
 
         <PhaseLayer phase="logIntro" reducedMotion={reducedMotion}>

@@ -156,7 +156,13 @@ export function useLiveClock(): ClockState {
     const visitorTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const visitorCity = getCityFromTimezone(visitorTZ);
 
-    const isSameZone = visitorTZ === 'Asia/Bangkok';
+    const GMT7_ZONES = new Set([
+      'Asia/Bangkok', 'Asia/Ho_Chi_Minh', 'Asia/Phnom_Penh',
+      'Asia/Vientiane', 'Asia/Jakarta', 'Asia/Pontianak',
+      'Asia/Barnaul', 'Asia/Hovd', 'Asia/Krasnoyarsk',
+      'Asia/Novokuznetsk', 'Asia/Novosibirsk', 'Asia/Tomsk',
+    ]);
+    const isSameZone = GMT7_ZONES.has(visitorTZ);
 
     function tick() {
       const now = new Date();

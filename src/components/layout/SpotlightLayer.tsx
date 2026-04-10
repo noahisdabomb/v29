@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useIsMobile, useReducedMotion } from '@/hooks/useMediaQuery';
 
 export default function SpotlightLayer() {
   const velocityRef = useRef(0);
   const lastScrollY = useRef(0);
   const rafId = useRef(0);
+  const isMobile = useIsMobile();
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    if (window.innerWidth <= 768) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (isMobile || reducedMotion) return;
 
     const root = document.documentElement;
 
@@ -71,7 +73,7 @@ export default function SpotlightLayer() {
       window.removeEventListener('scroll', handleScrollWithDecay);
       cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [isMobile, reducedMotion]);
 
   return <div className="spotlight-layer hidden md:block" />;
 }

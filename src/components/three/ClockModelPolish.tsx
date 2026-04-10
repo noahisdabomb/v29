@@ -306,6 +306,7 @@ export default function ClockModelPolish({
           liveClockState.displayProgress.toFixed(3),
           liveClockState.faceIn.toFixed(3),
           liveClockState.hold0659.toFixed(3),
+          liveClockState.flipHourTens.toFixed(3),
           liveClockState.flipMinuteOnes.toFixed(3),
           liveClockState.flipMinuteTens.toFixed(3),
           liveClockState.flipHourOnes.toFixed(3),

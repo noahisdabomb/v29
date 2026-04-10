@@ -196,6 +196,7 @@ export function drawPhoneScreen(
     activeIndex,
     activePulse,
     lineProgress,
+    loadingProgress,
   } = state;
   const w = PHONE_CANVAS.width;
   const h = PHONE_CANVAS.height;
@@ -404,6 +405,72 @@ export function drawPhoneScreen(
   ctx.lineTo(lineX, Math.min(lineBottom, lineNodeY + 28));
   ctx.stroke();
   ctx.restore();
+
+  // --- Skeleton loading bars (shimmer before entries) ---
+  if (loadingProgress > 0.01) {
+    const skeletonCount = 5;
+    const shimmerWidth = 140;
+    const entryFadeStart = entryOpacities[0] ?? 0;
+    const barAlpha = loadingProgress * (1 - entryFadeStart) * 0.85;
+
+    if (barAlpha > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = barAlpha;
+
+      for (let i = 0; i < skeletonCount; i++) {
+        const barY = rowStartY + i * (cardHeight + rowGap) + cardHeight * 0.3;
+        const barW = cardWidth * 0.75 - i * 16;
+        const barH = 16;
+        const barX = cardX + cardWidth * 0.12;
+
+        // Base bar with rounded shape
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        roundedRectPath(ctx, barX, barY, barW, barH, 6);
+        ctx.fill();
+
+        // Shimmer gradient sweep
+        const shimmerPos = (loadingProgress * 2.5 + i * 0.12) % 1.4 - 0.2;
+        const shimmerX = barX + barW * shimmerPos;
+        const shimmerGrad = ctx.createLinearGradient(
+          shimmerX - shimmerWidth / 2,
+          0,
+          shimmerX + shimmerWidth / 2,
+          0,
+        );
+        shimmerGrad.addColorStop(0, 'rgba(255,255,255,0)');
+        shimmerGrad.addColorStop(0.5, 'rgba(255,255,255,0.18)');
+        shimmerGrad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = shimmerGrad;
+        roundedRectPath(ctx, barX, barY, barW, barH, 6);
+        ctx.fill();
+
+        // Secondary shorter bar on some rows
+        if (i < 3) {
+          const bar2W = barW * 0.45;
+          const bar2Y = barY + barH + 6;
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          roundedRectPath(ctx, barX, bar2Y, bar2W, 10, 4);
+          ctx.fill();
+        }
+      }
+
+      // "Loading" indicator dots
+      const dotsAlpha = barAlpha * (0.4 + Math.sin(loadingProgress * 12) * 0.3);
+      ctx.globalAlpha = dotsAlpha;
+      ctx.fillStyle = 'rgba(224,68,88,0.6)';
+      const dotCenterX = cardX + cardWidth / 2;
+      const dotCenterY = rowStartY + skeletonCount * (cardHeight + rowGap) + 20;
+      for (let d = 0; d < 3; d++) {
+        const dotPhase = (loadingProgress * 4 + d * 0.3) % 1;
+        const dotScale = 0.6 + Math.sin(dotPhase * Math.PI) * 0.4;
+        ctx.beginPath();
+        ctx.arc(dotCenterX - 16 + d * 16, dotCenterY, 3 * dotScale, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+  }
 
   for (let index = 0; index < items.length; index += 1) {
     if (entryOpacities[index] < 0.01) continue;

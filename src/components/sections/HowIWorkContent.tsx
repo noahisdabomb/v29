@@ -7,6 +7,7 @@ import { ScrollReveal, StaggerReveal } from '@/components/ui/ScrollReveal';
 import ScrambleLabel from '@/components/ui/ScrambleLabel';
 import Testimonial from '@/components/sections/Testimonial';
 import TransitionLink from '@/components/layout/TransitionLink';
+import Button from '@/components/ui/Button';
 import {
   HOW_I_WORK,
   SCALE,
@@ -436,20 +437,12 @@ export default function HowIWorkContent() {
               straight conversation about fit, scope, and timing.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <a
-                href={CAL_COM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex rounded-full bg-accent px-8 py-4 font-heading text-base font-semibold text-text-primary transition-all duration-300 hover:shadow-[0_0_30px_rgba(224,68,88,0.25)] hover:scale-[1.02] active:scale-[0.98] active:duration-100"
-              >
+              <Button as="a" href={CAL_COM_URL} target="_blank" rel="noopener noreferrer" size="lg">
                 Book a Strategy Call
-              </a>
-              <TransitionLink
-                href="/work"
-                className="inline-flex rounded-full border border-border-subtle px-8 py-4 font-heading text-base font-semibold text-text-primary transition-all duration-300 hover:border-accent hover:text-accent hover:shadow-[0_0_30px_rgba(224,68,88,0.15)] hover:scale-[1.02] active:scale-[0.98] active:duration-100"
-              >
+              </Button>
+              <Button as="a" href="/work" variant="ghost" size="lg">
                 See the Work
-              </TransitionLink>
+              </Button>
             </div>
           </ScrollReveal>
         </div>

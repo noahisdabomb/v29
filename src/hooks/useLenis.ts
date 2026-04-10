@@ -7,6 +7,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Module-level singleton reference for imperative access (e.g. Footer scroll-to-top)
+let lenisInstance: Lenis | null = null;
+
+/** Get the active Lenis instance (null if reduced motion or SSR) */
+export function getLenis(): Lenis | null {
+  return lenisInstance;
+}
+
 /**
  * Initialize Lenis smooth scroll and sync with GSAP ScrollTrigger.
  * Matches the codex configuration: duration 1.0, exponential easing,
@@ -29,6 +37,7 @@ export function useLenis() {
     });
 
     lenisRef.current = lenis;
+    lenisInstance = lenis;
 
     // Sync Lenis scroll position with GSAP ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update);
@@ -46,6 +55,7 @@ export function useLenis() {
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
       lenisRef.current = null;
+      lenisInstance = null;
     };
   }, []);
 

@@ -6,29 +6,36 @@ export const PHASES = {
   statement: {
     in: 0.0,
     introEnd: 0.0,
-    holdEnd: 0.074,
-    outroStart: 0.074,
-    out: 0.1,
+    holdEnd: 0.06,
+    outroStart: 0.06,
+    out: 0.08,
   },
   handoff: {
-    in: 0.08,
-    introEnd: 0.11,
-    holdEnd: 0.17,
-    outroStart: 0.17,
-    out: 0.2,
+    in: 0.06,
+    introEnd: 0.09,
+    holdEnd: 0.13,
+    outroStart: 0.13,
+    out: 0.17,
+  },
+  coffee: {
+    in: 0.15,
+    introEnd: 0.18,
+    holdEnd: 0.22,
+    outroStart: 0.22,
+    out: 0.25,
   },
   logIntro: {
-    in: 0.18,
-    introEnd: 0.21,
-    holdEnd: 0.27,
-    outroStart: 0.27,
-    out: 0.3,
+    in: 0.23,
+    introEnd: 0.26,
+    holdEnd: 0.30,
+    outroStart: 0.30,
+    out: 0.33,
   },
   phone: {
-    in: 0.26,
-    introEnd: 0.32,
-    holdEnd: 0.45,
-    outroStart: 0.46,
+    in: 0.30,
+    introEnd: 0.36,
+    holdEnd: 0.46,
+    outroStart: 0.47,
     out: 0.52,
   },
   clock: {
@@ -63,9 +70,10 @@ export const PHASE_ORDER = Object.keys(PHASES) as PhaseName[];
 // ---------------------------------------------------------------------------
 export const BG_COLORS = [
   { pos: 0.00, color: '#0a0b0e' },
-  { pos: 0.08, color: '#0c0e12' },
-  { pos: 0.18, color: '#16120f' },
-  { pos: 0.30, color: '#2a1712' },
+  { pos: 0.06, color: '#0c0e12' },
+  { pos: 0.17, color: '#12100d' },
+  { pos: 0.25, color: '#1a1410' },
+  { pos: 0.33, color: '#2a1712' },
   { pos: 0.46, color: '#52201a' },
   { pos: 0.58, color: '#865040' },
   { pos: 0.66, color: '#c8ab8d' },
@@ -158,6 +166,9 @@ export const COLORS = {
   bgCard: '#1A1815',
 
   textPrimary: '#F5F0E6',
+  // NOTE: Canvas text colors below are intentionally darker than CSS custom properties
+  // (globals.css: --text-secondary: #C4BAA9, --text-tertiary: #A39A8F, --text-faint: #8A847C)
+  // to maintain readability on 3D model surfaces (phone, laptop, clock screen textures).
   textSecondary: '#9A938A',
   textTertiary: '#706A62',
   textFaint: '#736D65',
@@ -381,17 +392,17 @@ export const PHASE_CLASS_THRESHOLDS = {
 // Split phase time sequences (from codex flip clock animation)
 // ---------------------------------------------------------------------------
 export const BKK_TIME_SEQUENCE = [
-  { h: 10, m: 0,  ampm: 'PM' as const },
-  { h: 11, m: 30, ampm: 'PM' as const },
+  { h: 8,  m: 0,  ampm: 'PM' as const },
+  { h: 9,  m: 15, ampm: 'PM' as const },
+  { h: 10, m: 30, ampm: 'PM' as const },
+  { h: 11, m: 45, ampm: 'PM' as const },
   { h: 1,  m: 15, ampm: 'AM' as const },
-  { h: 3,  m: 14, ampm: 'AM' as const },
-  { h: 4,  m: 47, ampm: 'AM' as const },
-  { h: 5,  m: 58, ampm: 'AM' as const },
+  { h: 3,  m: 30, ampm: 'AM' as const },
 ];
 
 export const OVERNIGHT_BKK_TIME_SEQUENCE = [
   ...BKK_TIME_SEQUENCE,
-  { h: 7, m: 0, ampm: 'AM' as const },
+  { h: 8, m: 0, ampm: 'PM' as const },
 ] as const;
 
 // Split phase flip clock timing
@@ -404,8 +415,8 @@ export const SPLIT_FLIP = {
 
 export const CYCLE_TIME_MARKERS = [
   { id: 'handoff', label: 'Handoff', position: 0.08 },
-  { id: 'work', label: 'Overnight work', position: 0.32 },
-  { id: 'alarm', label: 'Alarm', position: 0.62 },
+  { id: 'work', label: 'Overnight work', position: 0.30 },
+  { id: 'alarm', label: 'Alarm', position: 0.58 },
   { id: 'delivered', label: 'Delivered', position: 0.88 },
 ] as const;
 
@@ -414,7 +425,7 @@ export const CYCLE_TIME_MARKERS = [
 // ---------------------------------------------------------------------------
 export const SCROLL_TRIGGER_DEFAULTS = {
   scrub: 0.1,
-  cycleScrollDistance: 7.8, // in viewport heights
+  cycleScrollDistance: 8.4, // in viewport heights
 } as const;
 
 // ---------------------------------------------------------------------------

@@ -7,8 +7,8 @@ import {
 import type { ClockSequenceState } from '@/lib/cycleScreenState';
 import { drawFlipClockDigit, type FlipClockDigit } from '@/lib/flipClockGlyphs';
 
-export const CLOCK_TIME_START = '6:59';
-export const CLOCK_TIME_END = '7:00';
+export const CLOCK_TIME_START = '7:59';
+export const CLOCK_TIME_END = '8:00';
 
 interface CardLayout {
   x: number;
@@ -205,8 +205,8 @@ function getDigitArt(digit: FlipClockDigit): DigitArt | null {
     full.height * DIGIT_LAYOUT.y,
     full.width * DIGIT_LAYOUT.width,
     full.height * DIGIT_LAYOUT.height,
-    '#eae5d6',
-    0.88,
+    '#ffffff',
+    0.95,
   );
 
   topCtx.clearRect(0, 0, top.width, top.height);
@@ -710,7 +710,7 @@ function drawDigitCard(
 
 function drawColon(ctx: CanvasRenderingContext2D, centerX: number, centerY: number) {
   ctx.save();
-  ctx.fillStyle = 'rgba(239,233,211,0.9)';
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
   ctx.beginPath();
   ctx.roundRect(centerX - 5, centerY - 38, 10, 14, 4);
   ctx.fill();

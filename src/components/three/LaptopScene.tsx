@@ -30,12 +30,12 @@ export default function LaptopScene({
       camera={{ fov: 24.5, near: 0.01, far: 50, position: [0.18, 1.06, 5.2] }}
       toneMappingExposure={1.04}
     >
-      <ambientLight color={0xf7f4ec} intensity={0.12} />
-      <directionalLight position={[2.6, 5.8, 4.6]} intensity={1.02} color={0xfdf8ef} />
-      <directionalLight position={[-4.2, 1.7, -3.1]} intensity={0.08} color={0xd7ddea} />
-      <directionalLight position={[-1.4, 3.4, -4.6]} intensity={0.16} color={0xf4f7ff} />
-      <directionalLight position={[0.7, 6.2, 0.5]} intensity={0.26} color={0xfffcf4} />
-      <pointLight position={[2.24, 0.48, 1.86]} intensity={0.038} color={0xffd9c8} distance={5.3} />
+      <ambientLight color={0xf7f4ec} intensity={0.06} />
+      <directionalLight position={[2.6, 5.8, 4.6]} intensity={0.7} color={0xfdf8ef} />
+      <directionalLight position={[-4.2, 1.7, -3.1]} intensity={0.06} color={0xd7ddea} />
+      <directionalLight position={[-1.4, 3.4, -4.6]} intensity={0.1} color={0xf4f7ff} />
+      <directionalLight position={[0.7, 6.2, 0.5]} intensity={0.14} color={0xfffcf4} />
+      <pointLight position={[2.24, 0.48, 1.86]} intensity={0.028} color={0xffd9c8} distance={5.3} />
 
       <StudioEnvironment />
       <Suspense fallback={null}>
